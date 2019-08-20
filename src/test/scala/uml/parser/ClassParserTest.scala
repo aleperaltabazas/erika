@@ -15,4 +15,11 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseDefinition(enumText.split("\n")) shouldBe "public enum Foo {"
     ClassParser.parseDefinition(abstractClassText.split("\n")) shouldBe "public abstract class Foo {"
   }
+
+  "parseName" should "work when name is present" in {
+    ClassParser.parseName("public class Foo extends Bar") shouldBe "Foo"
+    ClassParser.parseName("enum Baz") shouldBe "Baz"
+    ClassParser.parseName("public interface Biz")
+    ClassParser.parseName("abstract public class Bar") shouldBe "Bar"
+  }
 }

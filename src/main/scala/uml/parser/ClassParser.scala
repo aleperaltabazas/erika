@@ -23,7 +23,7 @@ case object ClassParser {
   def parseName(definition: String): String = {
 
     val words = definition.split("\\s").toList
-    words.find(_ == "class").orElse(words.find(_ == ("interface"))).orElse(words.find(_ == "interface"))
+    words.find(_ == "class").orElse(words.find(_ == "enum")).orElse(words.find(_ == "interface"))
       .map(words.indexOf(_)) match {
       case Some(index) => words(index + 1)
       case None => throw NoClassDefinitionError(s"No class definition could be parsed for definition $definition")
