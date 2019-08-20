@@ -25,8 +25,8 @@ case object ClassParser {
     val words = definition.split("\\s").toList
     words.find(_ == "class").orElse(words.find(_ == "enum")).orElse(words.find(_ == "interface"))
       .map(words.indexOf(_)) match {
-      case Some(index) => words(index + 1)
-      case None => throw NoClassDefinitionError(s"No class definition could be parsed for definition $definition")
+      case Some(index) if words.size >= (index + 2) && words(index + 1).matches("[A-Z]\\w+") => words(index + 1)
+      case _ => throw NoClassDefinitionError(s"No class definition could be parsed for definition $definition")
     }
   }
 
