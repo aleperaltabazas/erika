@@ -11,6 +11,7 @@ case object ClassParser {
       .split("\\n")
       .filter(line => !line.matches(Regex.CONSTRUCTOR(className)))
       .toList
+    
     simplifyMethods(innerBody.slice(1, innerBody.size - 1))
   }
 
@@ -22,7 +23,6 @@ case object ClassParser {
   }
 
   def parseName(definition: String): String = {
-
     val words = definition.split("\\s").toList
     words.find(_ == "class").orElse(words.find(_ == "enum")).orElse(words.find(_ == "interface"))
       .map(words.indexOf(_)) match {
@@ -31,20 +31,21 @@ case object ClassParser {
     }
   }
 
+  def parseAnnotations(text: String): List[String] = text
+    .split("(\n|\\s)")
+    .takeWhile(!isClassDefnition(_))
+    .filter(line => line.matches(Regex.ANNOTATION))
+    .toList
+
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
-    val lines = effectiveText.split("\\s").toList
+    val lines = effectiveText.split("(\\s|\n)").toList
     val definition = parseDefinition(lines)
     val className = parseName(definition)
     val annotations: List[String] = parseAnnotations(text)
     val body: List[String] = parseBody(className, text)
     ???
   }
-
-  private def parseAnnotations(text: String): List[String] = text.split("\n")
-    .takeWhile(!isClassDefnition(_))
-    .filter(line => line.matches(Regex.ANNOTATION))
-    .toList
 
   private def isClassDefnition(str: String): Boolean = str.matches(Regex.CLASS_DEFINITION)
 

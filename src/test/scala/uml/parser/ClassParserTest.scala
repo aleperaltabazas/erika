@@ -48,4 +48,9 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseBody("Foo", abstractClassText) shouldBe List("private int foo", "protected abstract void " +
       "doSomethingAbstract()")
   }
+
+  "parseAnnotations" should "yield the following" in {
+    ClassParser.parseAnnotations("@Some @Annotation\n@NewLineAnnotation") shouldBe List("@Some", "@Annotation",
+      "@NewLineAnnotation")
+  }
 }
