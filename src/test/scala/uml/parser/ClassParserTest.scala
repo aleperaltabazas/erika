@@ -15,6 +15,8 @@ case class ClassParserTest() extends FlatSpec with Matchers {
   val missingNameExtends: String = "public class extends Foo {\n private int foo;\n}"
   val classWithConstructor: String = "public class Foo {\npublic Foo(String str) {\nthis.str = str;\n}\nprivate " +
     "String str;\npublic String getStr() {\nreturn str;\n}\n}"
+  val classInitializingVariable: String = "public class Foo {\nprivate int foo = 3;\npublic int getFoo() {\nreturn" +
+    "foo;\n}\n}"
 
   "parseDefinition" should "work when class, interface or enum are present" in {
     ClassParser.parseDefinition(classText.split("\n")) shouldBe "public class Foo {"
@@ -50,6 +52,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseBody("Foo", abstractClassText) shouldBe List("private int foo", "protected abstract void " +
       "doSomethingAbstract()")
     ClassParser.parseBody("Foo", classWithConstructor) shouldBe List("private String str", "public String getStr()")
+    ClassParser.parseBody("Foo", classInitializingVariable) shouldBe List("private int foo = 3;", "public int getFoo()")
   }
 
   "parseAnnotations" should "yield the following" in {
