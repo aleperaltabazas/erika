@@ -15,5 +15,5 @@ case object Regex {
 
   val CLASS_DEFINITION: String = s"(.* )?(class|interface|enum) [A-Z]\\w*( .*)?"
 
-  val CONSTRUCTOR: String => String = className => s"($ANNOTATION)*($VISIBILITY )?$className[(].*[)] ?[{]?"
+  val CONSTRUCTOR: String => String = className => s"($ANNOTATION)*($VISIBILITY)?$className[(].*[)] ?[{]?"
 }

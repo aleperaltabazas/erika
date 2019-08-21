@@ -3,16 +3,16 @@ package uml.parser
 import uml.builder.ClassBuilder
 import uml.constants.Regex
 import uml.exception.NoClassDefinitionError
+import uml.model.Attribute
 
 case object ClassParser {
 
   def parseBody(className: String, text: String): List[String] = {
     val innerBody = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1)
       .split("\\n")
-      .filter(line => !line.matches(Regex.CONSTRUCTOR(className)))
       .toList
-    
-    simplifyMethods(innerBody.slice(1, innerBody.size - 1))
+
+    removeConstructor(className)(simplifyMethods(innerBody.slice(1, innerBody.size - 1)))
   }
 
   def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)
@@ -44,6 +44,8 @@ case object ClassParser {
     val className = parseName(definition)
     val annotations: List[String] = parseAnnotations(text)
     val body: List[String] = parseBody(className, text)
+    val attributes: List[Attribute] = AttributeParser.parse(body)
+
     ???
   }
 
@@ -70,6 +72,10 @@ case object ClassParser {
       }
     }
   }
+
+  private def removeConstructor(className: String): List[String] => List[String] = lines => lines.filter(!_.matches
+  (Regex.CONSTRUCTOR(className)))
+
 
   implicit class RichString(string: String) {
     def removeByRegex(regex: String): String = string.replaceAll(regex, "")
