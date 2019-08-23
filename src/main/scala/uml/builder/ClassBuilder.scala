@@ -11,6 +11,6 @@ case class ClassBuilder(name: String, attributes: List[Attribute] = List(),
                         parent: Class,
                         interfaces: List[String] = List(),
                         classType: ClassType,
-                        declaredSuper: Option[String] = None) {
-
+                        declaredSuper: Option[String] = None) extends Builder {
+  def build: Class = ???
 }

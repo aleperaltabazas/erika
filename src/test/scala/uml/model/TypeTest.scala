@@ -8,7 +8,7 @@ case class TypeTest() extends FlatSpec with Matchers {
     Type("int") shouldBe SimpleType("int")
     Type("List<String>") shouldBe GenericType("List", List(SimpleType("String")))
     Type("Map<String|String>") shouldBe GenericType("Map", List(SimpleType("String"), SimpleType("String")))
-    Type("Map<String|List<String>>") shouldBe GenericType("Map", List(SimpleType("String"), GenericType("List", List
-    (SimpleType("String")))))
+    Type("Map<String|List<String>>") shouldBe GenericType("Map", List(SimpleType("String"), GenericType("List",
+      List(SimpleType("String")))))
   }
 }

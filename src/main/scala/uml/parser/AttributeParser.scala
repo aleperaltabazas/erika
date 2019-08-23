@@ -13,10 +13,6 @@ case object AttributeParser {
       line <- body
       if line.matches(Regex.ATTRIBUTE)
     } yield parseIntoBuilder.andThen(_.build)(line)
-
-    body.filter(_.matches(Regex.ATTRIBUTE))
-      .map(line => parseIntoBuilder(line))
-      .map(_.build)
   }
 
   def parseIntoBuilder: String => AttributeBuilder = line => {

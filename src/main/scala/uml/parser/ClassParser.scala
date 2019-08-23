@@ -3,7 +3,7 @@ package uml.parser
 import uml.builder.ClassBuilder
 import uml.constants.Regex
 import uml.exception.NoClassDefinitionError
-import uml.model.Attribute
+import uml.model.{Attribute, Method}
 
 case object ClassParser {
 
@@ -24,11 +24,15 @@ case object ClassParser {
 
   def parseName(definition: String): String = {
     val words = definition.split("\\s").toList
-    words.find(_ == "class").orElse(words.find(_ == "enum")).orElse(words.find(_ == "interface"))
+    val name = words.find(_ == "class").orElse(words.find(_ == "enum")).orElse(words.find(_ == "interface"))
       .map(words.indexOf(_)) match {
-      case Some(index) if words.size >= (index + 2) && words(index + 1).matches("[A-Z]\\w+") => words(index + 1)
+      case Some(index) if words.size >= (index + 2) && words(index + 1).matches(s"[A-Z]\\w+(${Regex.GENERIC})?") =>
+        words(index + 1)
       case _ => throw NoClassDefinitionError(s"No class definition could be parsed for definition $definition")
     }
+
+    if (name.contains("<")) name.substring(0, name.indexOf('<'))
+    else name
   }
 
   def parseAnnotations(text: String): List[String] = text
@@ -37,14 +41,19 @@ case object ClassParser {
     .filter(line => line.matches(Regex.ANNOTATION))
     .toList
 
+  def parseSuper(className: String, definition: String): Option[String] = ???
+
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
     val lines = effectiveText.split("(\\s|\n)").toList
     val definition = parseDefinition(lines)
+
     val className = parseName(definition)
     val annotations: List[String] = parseAnnotations(text)
     val body: List[String] = parseBody(className, text)
     val attributes: List[Attribute] = AttributeParser.parse(body)
+    val methods: List[Method] = MethodParser.parse(body)
+    val parent = parseSuper(className, definition)
 
     ???
   }
@@ -73,13 +82,8 @@ case object ClassParser {
     }
   }
 
-  private def removeConstructor: String => List[String] => List[String] = { className =>
-    lines =>
-      for {
-        line <- lines
-        if line.matches(Regex.CONSTRUCTOR(className))
-      } yield line
-  }
+  private def removeConstructor: String => List[String] => List[String] = className => lines =>
+    lines.filter(!_.matches(Regex.CONSTRUCTOR(className)))
 
   implicit class RichString(string: String) {
     def removeByRegex(regex: String): String = string.replaceAll(regex, "")

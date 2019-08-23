@@ -35,6 +35,21 @@ case object LineParsingHelpers {
     }
   }
 
+  case object GenericReplacement {
+    def apply(str: String): String = {
+      var inGenerics = 0
+
+      str.foldLeft("") { (acc: String, char) =>
+        if (char == '<') inGenerics = inGenerics + 1
+        if (char == '>') inGenerics = inGenerics - 1
+
+        if (inGenerics > 0 && char == ' ') acc
+        else if (inGenerics > 0 && char == ',') acc.appended('|')
+        else acc.appended(char)
+      }
+    }
+  }
+
   private implicit class RichString(str: String) {
     def toModifier: Modifier = str match {
       case "public" => Modifiers.Public

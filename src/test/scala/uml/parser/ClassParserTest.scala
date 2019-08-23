@@ -36,6 +36,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseName("enum Baz") shouldBe "Baz"
     ClassParser.parseName("public interface Biz")
     ClassParser.parseName("abstract public class Bar") shouldBe "Bar"
+    ClassParser.parseName("public class Foo<T>") shouldBe "Foo"
   }
 
   "parseName" should "fail with the following" in {

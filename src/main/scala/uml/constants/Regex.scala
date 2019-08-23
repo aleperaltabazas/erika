@@ -1,7 +1,7 @@
 package uml.constants
 
 case object Regex {
-  private val GENERIC: String = "<.*>"
+  val GENERIC: String = "<.*>"
   private val INITIALIZATION: String = " ?= ?.*;?"
   private val INHERITANCE: String = s"extends [A-Z]\\w*($GENERIC)?"
   private val IMPLEMENTATION: String = s"implements [A-Z]\\w* ?(, ?[A-Z]\\w* ?)*($GENERIC)?"
