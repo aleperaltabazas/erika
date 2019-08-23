@@ -1,31 +1,27 @@
 package uml.parser
 
 import uml.builder.MethodBuilder
-import uml.exception.MethodParseError
+import uml.exception.{ArgumentParseError, MethodParseError}
 import uml.model.Modifiers.Modifier
-import uml.model.{Argument, Method}
+import uml.model.{Argument, Method, Type}
 import uml.parser.LineParsingHelpers.{ParseAnnotations, ParseModifiers, ParseTypeAndName}
 
 case object MethodParser {
 
-  def parseWithGenerics(line: String): List[Argument] = ???
-
-  def parseWithoutGenerics(line: String): List[Argument] = {
-    line.split(",")
-      .map { arg =>
-        val words = arg.split("\\s")
-        val name = words(words.size - 1)
-        val _type = words(words.size - 2)
-
-        Argument(name, _type)
-      }
-      .toList
-  }
-
   def parseArguments(args: List[String]): List[Argument] = {
     val dropParenthesis: String = args.mkString(" ").replaceAll("([(]|[)]|[{]|;) ?", "")
-    if (dropParenthesis.exists(c => c == '<' || c == '>')) parseWithGenerics(dropParenthesis)
-    else parseWithoutGenerics(dropParenthesis)
+    val mappedString: List[String] = MapStringToDomain(dropParenthesis).split(",").toList
+
+    for {
+      arg <- mappedString
+    } yield {
+      arg.split("\\s").toList match {
+        case _ :+ _type :+ name => {
+          Argument(name, Type(_type))
+        }
+        case _ => throw ArgumentParseError(s"Error parsing argument $arg")
+      }
+    }
   }
 
   def parseIntoBuilder(line: String): MethodBuilder = {
@@ -44,4 +40,20 @@ case object MethodParser {
       line <- body
     } yield parseIntoBuilder(line).build
   }
+
+  private case object MapStringToDomain {
+    def apply(str: String): String = {
+      var inGenerics = 0
+
+      str.foldLeft("") { (acc: String, char) =>
+        if (char == '<') inGenerics = inGenerics + 1
+        if (char == '>') inGenerics = inGenerics - 1
+
+        if (inGenerics > 0 && char == ' ') acc
+        else if (inGenerics > 0 && char == ',') acc.appended('|')
+        else acc.appended(char)
+      }
+    }
+  }
+
 }
