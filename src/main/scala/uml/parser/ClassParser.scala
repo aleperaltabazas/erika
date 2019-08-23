@@ -12,7 +12,7 @@ case object ClassParser {
       .split("\\n")
       .toList
 
-    removeConstructor(className)(simplifyMethods(innerBody.slice(1, innerBody.size - 1)))
+    simplifyMethods.andThen(removeConstructor(className))(innerBody.slice(1, innerBody.size - 1))
   }
 
   def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)
@@ -55,7 +55,7 @@ case object ClassParser {
 
   private def filterPackages: String => String = text => text.removeByRegex("package .*;")
 
-  private def simplifyMethods(lines: List[String]): List[String] = {
+  private def simplifyMethods: List[String] => List[String] = lines => {
     var inExpressions = 0
 
     lines.foldLeft(List[String]()) {
@@ -73,9 +73,13 @@ case object ClassParser {
     }
   }
 
-  private def removeConstructor(className: String): List[String] => List[String] = lines => lines.filter(!_.matches
-  (Regex.CONSTRUCTOR(className)))
-
+  private def removeConstructor: String => List[String] => List[String] = { className =>
+    lines =>
+      for {
+        line <- lines
+        if line.matches(Regex.CONSTRUCTOR(className))
+      } yield line
+  }
 
   implicit class RichString(string: String) {
     def removeByRegex(regex: String): String = string.replaceAll(regex, "")

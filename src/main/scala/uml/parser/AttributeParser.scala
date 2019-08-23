@@ -9,12 +9,17 @@ import uml.parser.LineParsingHelpers._
 
 case object AttributeParser {
   def parse(body: List[String]): List[Attribute] = {
+    for {
+      line <- body
+      if line.matches(Regex.ATTRIBUTE)
+    } yield parseIntoBuilder.andThen(_.build)(line)
+
     body.filter(_.matches(Regex.ATTRIBUTE))
       .map(line => parseIntoBuilder(line))
       .map(_.build)
   }
 
-  def parseIntoBuilder(line: String): AttributeBuilder = {
+  def parseIntoBuilder: String => AttributeBuilder = line => {
     val effectiveLine = removeInitialization(line)
     val words: List[String] = effectiveLine.split("\\s").toList
 

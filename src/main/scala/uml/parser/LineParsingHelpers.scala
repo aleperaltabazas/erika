@@ -16,10 +16,10 @@ case object LineParsingHelpers {
 
   case object ParseModifiers {
     def apply(words: List[String]): List[Modifier] = {
-      words.filter(_.matches(s"${Regex.VISIBILITY}|${
-        Regex
-          .MODIFIERS
-      }")).map(_.toModifier)
+      for {
+        word <- words
+        if word.matches(s"${Regex.VISIBILITY}|${Regex.MODIFIERS}")
+      } yield word.toModifier
     }
   }
 
@@ -35,7 +35,7 @@ case object LineParsingHelpers {
     }
   }
 
-  implicit class RichString(str: String) {
+  private implicit class RichString(str: String) {
     def toModifier: Modifier = str match {
       case "public" => Modifiers.Public
       case "private" => Modifiers.Private
