@@ -52,7 +52,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseBody("Foo", abstractClassText) shouldBe List("private int foo", "protected abstract void " +
       "doSomethingAbstract()")
     ClassParser.parseBody("Foo", classWithConstructor) shouldBe List("private String str", "public String getStr()")
-    ClassParser.parseBody("Foo", classInitializingVariable) shouldBe List("private int foo = 3;", "public int getFoo()")
+    ClassParser.parseBody("Foo", classInitializingVariable) shouldBe List("private int foo = 3", "public int getFoo()")
   }
 
   "parseAnnotations" should "yield the following" in {

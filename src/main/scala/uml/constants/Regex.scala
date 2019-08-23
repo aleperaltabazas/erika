@@ -26,4 +26,6 @@ case object Regex {
 
   val ATTRIBUTE: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+($INITIALIZATION|;?)"
 
+  val METHOD: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+[(].*[)](;| ?{?)"
+
 }

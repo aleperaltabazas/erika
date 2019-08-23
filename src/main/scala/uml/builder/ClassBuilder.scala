@@ -12,5 +12,5 @@ case class ClassBuilder(name: String, attributes: List[Attribute] = List(),
                         interfaces: List[String] = List(),
                         classType: ClassType,
                         declaredSuper: Option[String] = None) {
-  
+
 }
