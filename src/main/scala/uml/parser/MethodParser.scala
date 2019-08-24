@@ -4,12 +4,13 @@ import uml.builder.MethodBuilder
 import uml.exception.{ArgumentParseError, MethodParseError}
 import uml.model.Modifiers.Modifier
 import uml.model.{Argument, Method, Type}
-import uml.parser.LineParsingHelpers.{GenericReplacement, ParseAnnotations, ParseModifiers, ParseTypeAndName}
+import uml.parser.ParseHelpers.{GenericReplacement, ParseAnnotations, ParseModifiers, ParseTypeAndName}
+import uml.utils.Implicits.RichString
 
 case object MethodParser {
 
   def parseArguments(args: List[String]): List[Argument] = {
-    val dropParenthesis: String = args.mkString(" ").replaceAll("([(]|[)]|[{]|;) ?", "")
+    val dropParenthesis: String = args.mkString(" ").removeByRegex("([(]|[)]|[{]|;) ?")
     val mappedString: List[String] = GenericReplacement(dropParenthesis).split(",").toList
 
     for {

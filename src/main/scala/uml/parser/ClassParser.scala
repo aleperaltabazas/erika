@@ -3,7 +3,11 @@ package uml.parser
 import uml.builder.ClassBuilder
 import uml.constants.Regex
 import uml.exception.NoClassDefinitionError
-import uml.model.{Attribute, Method}
+import uml.model.ClassTypes.ClassType
+import uml.model.Modifiers.Modifier
+import uml.model.{Attribute, ClassTypes, Method}
+import uml.parser.ParseHelpers.GenericReplacement
+import uml.utils.Implicits.RichString
 
 case object ClassParser {
 
@@ -12,18 +16,17 @@ case object ClassParser {
       .split("\\n")
       .toList
 
-    simplifyMethods.andThen(removeConstructor(className))(innerBody.slice(1, innerBody.size - 1))
+    simplifyMethods.andThen(filterConstructor(className))(innerBody.slice(1, innerBody.size - 1))
   }
 
   def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)
 
   def parseDefinition(lines: List[String]): String = lines.find(_.matches(Regex.CLASS_DEFINITION)) match {
-    case Some(definition) => definition
+    case Some(definition) => definition.removeByRegex("{|}|;")
     case None => throw NoClassDefinitionError(s"No class definition found. Error text: ${lines.mkString("\\n")}")
   }
 
-  def parseName(definition: String): String = {
-    val words = definition.split("\\s").toList
+  def parseName(definition: String, words: List[String]): String = {
     val name = words.find(_ == "class").orElse(words.find(_ == "enum")).orElse(words.find(_ == "interface"))
       .map(words.indexOf(_)) match {
       case Some(index) if words.size >= (index + 2) && words(index + 1).matches(s"[A-Z]\\w+(${Regex.GENERIC})?") =>
@@ -37,28 +40,64 @@ case object ClassParser {
 
   def parseAnnotations(text: String): List[String] = text
     .split("(\n|\\s)")
-    .takeWhile(!isClassDefnition(_))
+    .takeWhile(!isClassDefinition(_))
     .filter(line => line.matches(Regex.ANNOTATION))
     .toList
 
-  def parseSuper(className: String, definition: String): Option[String] = ???
+  def parseSuper(className: String, words: List[String]): Option[String] = {
+    if (words.contains("extends")) {
+      val parent = words(words.indexOf("extends") + 1)
+
+      if (parent.trim == className) {
+        throw IllegalExtensionError(className, parent, words.mkString(" "))
+      }
+      Some(parent)
+    }
+    else None
+  }
+
+  def parseType(className: String, words: List[String]): ClassType = {
+    words(words.indexOf(className) - 1) match {
+      case "class" if words(words.indexOf(className) - 2) == "abstract" => ClassTypes.AbstractClass
+      case "class" => ClassTypes.ConcreteClass
+      case "interface" => ClassTypes.Interface
+      case "enum" => ClassTypes.Enum
+      case _ => throw NoSuchTypeException(words.mkString(" "))
+    }
+  }
+
+  def parseModifiers(classType: ClassType, words: List[String]): List[Modifier] = words.take(words.indexOf(classType
+    .toString)).map(str => str.toModifier)
+
+  def parseInterfaces(className: String, words: List[String]): List[String] = {
+    if (words.contains("implements")) {
+      words.drop(words.indexOf("implements"))
+        .map(GenericReplacement(_))
+        .map(w => w.removeByRegex(","))
+    }
+    else List()
+  }
 
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
-    val lines = effectiveText.split("(\\s|\n)").toList
-    val definition = parseDefinition(lines)
+    val lines: List[String] = effectiveText.split("(\\s|\n)").toList
+    val definition: String = parseDefinition(lines)
+    val definitionWords: List[String] = definition.removeByRegex(";|{|}").split("\\s").toList
 
-    val className = parseName(definition)
+    val className: String = parseName(definition, definitionWords)
+    val classType: ClassType = parseType(className, definitionWords)
     val annotations: List[String] = parseAnnotations(text)
     val body: List[String] = parseBody(className, text)
     val attributes: List[Attribute] = AttributeParser.parse(body)
     val methods: List[Method] = MethodParser.parse(body)
-    val parent = parseSuper(className, definition)
+    val parent: Option[String] = parseSuper(className, definitionWords)
+    val modifiers: List[Modifier] = parseModifiers(classType, definitionWords)
+    val interfaces: List[String] = parseInterfaces(className, definitionWords)
 
-    ???
+    ClassBuilder(className, attributes, methods, modifiers, annotations, interfaces, classType, parent)
   }
 
-  private def isClassDefnition(str: String): Boolean = str.matches(Regex.CLASS_DEFINITION)
+  private def isClassDefinition(str: String): Boolean = str.matches(Regex.CLASS_DEFINITION)
 
   private def filterImports: String => String = text => text.removeByRegex("import .*;")
 
@@ -82,11 +121,7 @@ case object ClassParser {
     }
   }
 
-  private def removeConstructor: String => List[String] => List[String] = className => lines =>
+  private def filterConstructor: String => List[String] => List[String] = className => lines =>
     lines.filter(!_.matches(Regex.CONSTRUCTOR(className)))
-
-  implicit class RichString(string: String) {
-    def removeByRegex(regex: String): String = string.replaceAll(regex, "")
-  }
 
 }

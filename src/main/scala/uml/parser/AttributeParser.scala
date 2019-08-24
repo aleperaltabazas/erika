@@ -5,7 +5,7 @@ import uml.constants.Regex
 import uml.exception.AttributeParseError
 import uml.model.Attribute
 import uml.model.Modifiers.Modifier
-import uml.parser.LineParsingHelpers._
+import uml.parser.ParseHelpers._
 
 case object AttributeParser {
   def parse(body: List[String]): List[Attribute] = {

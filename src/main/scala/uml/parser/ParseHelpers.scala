@@ -1,11 +1,11 @@
 package uml.parser
 
 import uml.constants.Regex
-import uml.exception.{NoSuchModifierException, ParseError}
-import uml.model.Modifiers
+import uml.exception.ParseError
 import uml.model.Modifiers.Modifier
+import uml.utils.Implicits.RichString
 
-case object LineParsingHelpers {
+case object ParseHelpers {
   implicit private val parseError: String => ParseError = line => ParseError(s"Parse error in line: $line")
 
   case object ParseAnnotations {
@@ -50,18 +50,12 @@ case object LineParsingHelpers {
     }
   }
 
-  private implicit class RichString(str: String) {
-    def toModifier: Modifier = str match {
-      case "public" => Modifiers.Public
-      case "private" => Modifiers.Private
-      case "protected" => Modifiers.Protected
-      case "static" => Modifiers.Static
-      case "final" => Modifiers.Final
-      case "default" => Modifiers.Default
-      case "synchronized" => Modifiers.Synchronized
-      case "volatile" => Modifiers.Volatile
-      case _ => throw NoSuchModifierException(str)
+  case object UnwrapGeneric {
+    def apply(str: String): String = {
+      if (str.contains("<")) str.substring(0, str.indexOf('<'))
+      else str
     }
   }
+
 
 }

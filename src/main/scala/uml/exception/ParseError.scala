@@ -1,3 +1,4 @@
 package uml.exception
 
-case class ParseError(msg: String) extends RuntimeException(msg)
+case class ParseError(msg: String)
+  extends RuntimeException(msg)
