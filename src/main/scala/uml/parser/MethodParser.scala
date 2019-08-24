@@ -3,7 +3,8 @@ package uml.parser
 import uml.builder.MethodBuilder
 import uml.exception.{ArgumentParseError, MethodParseError}
 import uml.model.Modifiers.Modifier
-import uml.model.{Argument, Method, Type}
+import uml.model.types.Type
+import uml.model.{Argument, Method}
 import uml.parser.ParseHelpers.{GenericReplacement, ParseAnnotations, ParseModifiers, ParseTypeAndName}
 import uml.utils.Implicits.RichString
 

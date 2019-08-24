@@ -1,4 +1,4 @@
-package uml.model
+package uml.model.types
 
 case class GenericType(wrappingType: String, composingTypes: List[Type]) extends Type {
   override def name: String = {

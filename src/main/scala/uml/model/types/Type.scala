@@ -1,4 +1,4 @@
-package uml.model
+package uml.model.types
 
 trait Type {
   def name: String

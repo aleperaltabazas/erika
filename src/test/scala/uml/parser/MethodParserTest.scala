@@ -1,7 +1,8 @@
 package uml.parser
 
 import org.scalatest.{FlatSpec, Matchers}
-import uml.model.{Argument, Type}
+import uml.model.Argument
+import uml.model.types.Type
 
 case class MethodParserTest() extends FlatSpec with Matchers {
   "parseArguments" should "work with the following" in {

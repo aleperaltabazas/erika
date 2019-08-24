@@ -1,6 +1,7 @@
 package uml.model
 
 import org.scalatest.{FlatSpec, Matchers}
+import uml.model.types.{GenericType, SimpleType, Type}
 
 case class TypeTest() extends FlatSpec with Matchers {
   "Type of" should "be" in {
