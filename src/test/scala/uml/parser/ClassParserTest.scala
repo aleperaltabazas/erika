@@ -1,7 +1,9 @@
 package uml.parser
 
 import org.scalatest.{FlatSpec, Matchers}
-import uml.exception.NoClassDefinitionError
+import uml.exception.{NoClassDefinitionError, NoSuchTypeException}
+import uml.model.ClassTypes._
+import uml.model.Modifiers._
 
 case class ClassParserTest() extends FlatSpec with Matchers {
   val classText: String = "public class Foo {\nprivate int foo;\nprivate int bar;\n public void doSomething() {\n " +
@@ -19,10 +21,10 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     "foo;\n}\n}"
 
   "parseDefinition" should "work when class, interface or enum are present" in {
-    ClassParser.parseDefinition(classText.split("\n")) shouldBe "public class Foo {"
-    ClassParser.parseDefinition(interfaceText.split("\n")) shouldBe "public interface Foo {"
-    ClassParser.parseDefinition(enumText.split("\n")) shouldBe "public enum Foo {"
-    ClassParser.parseDefinition(abstractClassText.split("\n")) shouldBe "public abstract class Foo {"
+    ClassParser.parseDefinition(classText.split("\n")) shouldBe "public class Foo"
+    ClassParser.parseDefinition(interfaceText.split("\n")) shouldBe "public interface Foo"
+    ClassParser.parseDefinition(enumText.split("\n")) shouldBe "public enum Foo"
+    ClassParser.parseDefinition(abstractClassText.split("\n")) shouldBe "public abstract class Foo"
   }
 
   "parseDefinition" should "fail with the following" in {
@@ -59,5 +61,29 @@ case class ClassParserTest() extends FlatSpec with Matchers {
   "parseAnnotations" should "yield the following" in {
     ClassParser.parseAnnotations("@Some @Annotation\n@NewLineAnnotation") shouldBe List("@Some", "@Annotation",
       "@NewLineAnnotation")
+    ClassParser.parseAnnotations("@Some @Annotation\n@NewLineAnnotation\npublic class Foo") shouldBe List("@Some", "@Annotation", "@NewLineAnnotation")
+    ClassParser.parseAnnotations("@Some @Annotation\n@NewLineAnnotation\npublic class Foo " +
+      "{\n@ShouldNotBePresent\nprivate int foo;\n}") shouldBe List("@Some", "@Annotation", "@NewLineAnnotation")
+  }
+
+  "parseType" should "yield the following" in {
+    ClassParser.parseType("Foo", "public class Foo".split("\\s").toList) shouldBe ConcreteClass
+    ClassParser.parseType("Foo", "public abstract class Foo".split("\\s").toList) shouldBe AbstractClass
+    ClassParser.parseType("Foo", "interface Foo extends Bar".split("\\s").toList) shouldBe Interface
+    ClassParser.parseType("Foo", "public enum Foo".split("\\s").toList) shouldBe Enum
+    a[NoSuchTypeException] should be thrownBy ClassParser.parseType("Foo", "public abstract Foo".split("\\s").toList)
+  }
+
+  "parseModifiers" should "yield the following" in {
+    ClassParser.parseModifiers(ConcreteClass, "public final class Foo".split("\\s").toList) shouldBe List(Public, Final)
+    ClassParser.parseModifiers(AbstractClass, "abstract public class Foo".split("\\s").toList) shouldBe List(Abstract, Public)
+    ClassParser.parseModifiers(Interface, "public interface Foo".split("\\s").toList) shouldBe List(Public)
+  }
+
+  "parseInterfaces" should "yield the following" in {
+    ClassParser.parseInterfaces("Foo", "public class Foo".split("\\s").toList) shouldBe List()
+    ClassParser.parseInterfaces("Foo", "public class Foo implements Bar".split("\\s").toList) shouldBe List("Bar")
+    ClassParser.parseInterfaces("Foo", "public class Foo implements Bar, Baz, Biz".split("\\s").toList) shouldBe
+      List("Bar", "Baz", "Biz")
   }
 }

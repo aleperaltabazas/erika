@@ -16,6 +16,7 @@ object Implicits {
       case "default" => Modifiers.Default
       case "synchronized" => Modifiers.Synchronized
       case "volatile" => Modifiers.Volatile
+      case "abstract" => Modifiers.Abstract
       case _ => throw NoSuchModifierException(str)
     }
 
