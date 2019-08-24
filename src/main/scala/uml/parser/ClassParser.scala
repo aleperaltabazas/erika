@@ -55,8 +55,10 @@ case object ClassParser {
       if (parent.trim == className) {
         throw IllegalExtensionError(className, parent, words.mkString(" "))
       }
+
       Some(parent)
     }
+
     else None
   }
 

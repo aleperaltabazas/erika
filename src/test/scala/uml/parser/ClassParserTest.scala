@@ -1,7 +1,7 @@
 package uml.parser
 
 import org.scalatest.{FlatSpec, Matchers}
-import uml.exception.{NoClassDefinitionError, NoSuchTypeException}
+import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
 import uml.model.ClassTypes._
 import uml.model.Modifiers._
 
@@ -85,5 +85,12 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseInterfaces("Foo", "public class Foo implements Bar".split("\\s").toList) shouldBe List("Bar")
     ClassParser.parseInterfaces("Foo", "public class Foo implements Bar, Baz, Biz".split("\\s").toList) shouldBe
       List("Bar", "Baz", "Biz")
+  }
+
+  "parseSuper" should "yield the following" in {
+    ClassParser.parseSuper("Foo", "public class Foo".split("\\s").toList) shouldBe None
+    ClassParser.parseSuper("Foo", "public class Foo extends Bar".split("\\s").toList) shouldBe Some("Bar")
+    an[IllegalExtensionError] should be thrownBy ClassParser.parseSuper("Foo", "public class Foo extends Foo".split
+    ("\\s").toList)
   }
 }
