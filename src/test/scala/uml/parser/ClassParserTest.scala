@@ -1,13 +1,16 @@
 package uml.parser
 
 import org.scalatest.{FlatSpec, Matchers}
+import uml.builder.ClassBuilder
 import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
 import uml.model.ClassTypes._
 import uml.model.Modifiers._
+import uml.model.types.Type
+import uml.model.{Attribute, ClassTypes, Method}
 
 case class ClassParserTest() extends FlatSpec with Matchers {
   val classText: String = "public class Foo {\nprivate int foo;\nprivate int bar;\n public void doSomething() {\n " +
-    "System.out.println(\"Hello, world!\");\n}\npublic void getFoo() {\n return foo;\n}\n}"
+    "System.out.println(\"Hello, world!\");\n}\npublic int getFoo() {\n return foo;\n}\n}"
   val interfaceText: String = "public interface Foo {\n void doSomething();\n int getSomething();\n}"
   val enumText: String = "public enum Foo {\nFOO,\nBAR,\nBAZ,\n}"
   val abstractClassText: String = "public abstract class Foo {\nprivate int foo;\n protected abstract void " +
@@ -49,7 +52,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
 
   "parseBody" should "work" in {
     ClassParser.parseBody("Foo", classText) shouldBe List("private int foo", "private int bar", "public void " +
-      "doSomething()", "public void getFoo()")
+      "doSomething()", "public int getFoo()")
     ClassParser.parseBody("Foo", interfaceText) shouldBe List("void doSomething()", "int getSomething()")
     ClassParser.parseBody("Foo", enumText) shouldBe List("FOO,", "BAR,", "BAZ,")
     ClassParser.parseBody("Foo", abstractClassText) shouldBe List("private int foo", "protected abstract void " +
@@ -95,5 +98,19 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseSuper("Foo", "public class Foo extends Bar".split("\\s").toList) shouldBe Some("Bar")
     an[IllegalExtensionError] should be thrownBy ClassParser.parseSuper("Foo", "public class Foo extends Foo".split
     ("\\s").toList)
+  }
+
+  "parseIntoBuilder" should "work" in {
+    ClassParser.parseIntoBuilder(classText) shouldBe ClassBuilder("Foo",
+      List(Attribute("foo", Type of "int", List(Private), List()),
+        Attribute("bar", Type of "int", List(Private), List())),
+      List(Method("doSomething", Type of "void", List(), List(Public), List()),
+        Method("getFoo", Type of "int", List(), List(Public), List())),
+      List(Public),
+      List(),
+      List(),
+      ClassTypes.ConcreteClass,
+      None
+    )
   }
 }
