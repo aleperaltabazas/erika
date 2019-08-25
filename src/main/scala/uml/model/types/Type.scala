@@ -17,6 +17,7 @@ object Type {
 
       GenericType(wrappingType, composingTypes)
     }
+
     else SimpleType(string)
   }
 }

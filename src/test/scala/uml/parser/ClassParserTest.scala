@@ -20,20 +20,20 @@ case class ClassParserTest() extends FlatSpec with Matchers {
   val classInitializingVariable: String = "public class Foo {\nprivate int foo = 3;\npublic int getFoo() {\nreturn" +
     "foo;\n}\n}"
 
-  "parseDefinition" should "work when class, interface or enum are present" in {
+  "parseDefinition" should "work" in {
     ClassParser.parseDefinition(classText.split("\n")) shouldBe "public class Foo"
     ClassParser.parseDefinition(interfaceText.split("\n")) shouldBe "public interface Foo"
     ClassParser.parseDefinition(enumText.split("\n")) shouldBe "public enum Foo"
     ClassParser.parseDefinition(abstractClassText.split("\n")) shouldBe "public abstract class Foo"
   }
 
-  "parseDefinition" should "fail with the following" in {
+  "parseDefinition" should "fail" in {
     a[NoClassDefinitionError] should be thrownBy ClassParser.parseName(missingClass)
     a[NoClassDefinitionError] should be thrownBy ClassParser.parseName(missingName)
     a[NoClassDefinitionError] should be thrownBy ClassParser.parseName(missingNameExtends)
   }
 
-  "parseName" should "work with the following" in {
+  "parseName" should "work" in {
     ClassParser.parseName("public class Foo extends Bar") shouldBe "Foo"
     ClassParser.parseName("enum Baz") shouldBe "Baz"
     ClassParser.parseName("public interface Biz")
@@ -41,13 +41,13 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseName("public class Foo<T>") shouldBe "Foo"
   }
 
-  "parseName" should "fail with the following" in {
+  "parseName" should "fail" in {
     a[NoClassDefinitionError] should be thrownBy ClassParser.parseName("public class")
     a[NoClassDefinitionError] should be thrownBy ClassParser.parseName("public class extends Baz")
     a[NoClassDefinitionError] should be thrownBy ClassParser.parseName("public Foo extends bar")
   }
 
-  "parseBody" should "yield the following" in {
+  "parseBody" should "work" in {
     ClassParser.parseBody("Foo", classText) shouldBe List("private int foo", "private int bar", "public void " +
       "doSomething()", "public void getFoo()")
     ClassParser.parseBody("Foo", interfaceText) shouldBe List("void doSomething()", "int getSomething()")
@@ -58,7 +58,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseBody("Foo", classInitializingVariable) shouldBe List("private int foo = 3", "public int getFoo()")
   }
 
-  "parseAnnotations" should "yield the following" in {
+  "parseAnnotations" should "work" in {
     ClassParser.parseAnnotations("@Some @Annotation\n@NewLineAnnotation") shouldBe List("@Some", "@Annotation",
       "@NewLineAnnotation")
     ClassParser.parseAnnotations("@Some @Annotation\n@NewLineAnnotation\npublic class Foo") shouldBe List("@Some", "@Annotation", "@NewLineAnnotation")
@@ -66,28 +66,31 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       "{\n@ShouldNotBePresent\nprivate int foo;\n}") shouldBe List("@Some", "@Annotation", "@NewLineAnnotation")
   }
 
-  "parseType" should "yield the following" in {
+  "parseType" should "work" in {
     ClassParser.parseType("Foo", "public class Foo".split("\\s").toList) shouldBe ConcreteClass
     ClassParser.parseType("Foo", "public abstract class Foo".split("\\s").toList) shouldBe AbstractClass
     ClassParser.parseType("Foo", "interface Foo extends Bar".split("\\s").toList) shouldBe Interface
     ClassParser.parseType("Foo", "public enum Foo".split("\\s").toList) shouldBe Enum
+  }
+
+  "parseType" should "fail" in {
     a[NoSuchTypeException] should be thrownBy ClassParser.parseType("Foo", "public abstract Foo".split("\\s").toList)
   }
 
-  "parseModifiers" should "yield the following" in {
+  "parseModifiers" should "work" in {
     ClassParser.parseModifiers(ConcreteClass, "public final class Foo".split("\\s").toList) shouldBe List(Public, Final)
     ClassParser.parseModifiers(AbstractClass, "abstract public class Foo".split("\\s").toList) shouldBe List(Abstract, Public)
     ClassParser.parseModifiers(Interface, "public interface Foo".split("\\s").toList) shouldBe List(Public)
   }
 
-  "parseInterfaces" should "yield the following" in {
+  "parseInterfaces" should "work" in {
     ClassParser.parseInterfaces("Foo", "public class Foo".split("\\s").toList) shouldBe List()
     ClassParser.parseInterfaces("Foo", "public class Foo implements Bar".split("\\s").toList) shouldBe List("Bar")
     ClassParser.parseInterfaces("Foo", "public class Foo implements Bar, Baz, Biz".split("\\s").toList) shouldBe
       List("Bar", "Baz", "Biz")
   }
 
-  "parseSuper" should "yield the following" in {
+  "parseSuper" should "work" in {
     ClassParser.parseSuper("Foo", "public class Foo".split("\\s").toList) shouldBe None
     ClassParser.parseSuper("Foo", "public class Foo extends Bar".split("\\s").toList) shouldBe Some("Bar")
     an[IllegalExtensionError] should be thrownBy ClassParser.parseSuper("Foo", "public class Foo extends Foo".split

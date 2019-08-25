@@ -11,22 +11,11 @@ import uml.utils.Implicits.RichString
 
 case object MethodParser {
 
-  def parseArguments(args: String): List[Argument] = {
-    args match {
-      case "" | "()" => Nil
-      case _ =>
-        val dropParenthesis: String = args.removeByRegex("([(]|[)]|[{]|;) ?")
-        val mappedString: List[String] = GenericReplacement(dropParenthesis).split(",").toList
-
-        for {
-          arg <- mappedString
-        } yield {
-          arg.split("\\s").toList match {
-            case _ :+ _type :+ name if !name.isEmpty && !_type.isEmpty => Argument(name, Type(_type))
-            case _ => throw ArgumentParseError(s"Error parsing argument $arg")
-          }
-        }
-    }
+  def parse(body: List[String]): List[Method] = {
+    for {
+      line <- body
+      if line.matches(Regex.METHOD)
+    } yield parseIntoBuilder(line).build
   }
 
   def parseIntoBuilder(line: String): MethodBuilder = {
@@ -44,11 +33,22 @@ case object MethodParser {
     MethodBuilder(name, returnType, arguments, modifiers, annotations)
   }
 
-  def parse(body: List[String]): List[Method] = {
-    for {
-      line <- body
-      if line.matches(Regex.METHOD)
-    } yield parseIntoBuilder(line).build
+  def parseArguments(args: String): List[Argument] = {
+    args match {
+      case "" | "()" => Nil
+      case _ =>
+        val dropParenthesis: String = args.removeByRegex("([(]|[)]|[{]|;) ?")
+        val mappedString: List[String] = GenericReplacement(dropParenthesis).split(",").toList
+
+        for {
+          arg <- mappedString
+        } yield {
+          arg.split("\\s").toList match {
+            case _ :+ _type :+ name if !name.isEmpty && !_type.isEmpty => Argument(name, Type(_type))
+            case _ => throw ArgumentParseError(s"Error parsing argument $arg")
+          }
+        }
+    }
   }
 
 }
