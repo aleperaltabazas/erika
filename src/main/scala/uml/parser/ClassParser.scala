@@ -5,15 +5,13 @@ import uml.constants.Regex
 import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
 import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
-import uml.model.{Attribute, ClassTypes, Method}
+import uml.model.{Attribute, Class, ClassTypes, Method}
 import uml.parser.ParseHelpers.GenericReplacement
 import uml.utils.Implicits.RichString
 
 case object ClassParser {
 
-  def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)
-
-  def parseName(definition: String): String = parseName(definition, effectiveWords(definition))
+  def parse(classes: List[String]): List[Class] = ???
 
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
@@ -34,6 +32,10 @@ case object ClassParser {
     ClassBuilder(className, attributes, methods, modifiers, annotations, interfaces, classType, parent)
   }
 
+  def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)
+
+  def parseName(definition: String): String = parseName(definition, effectiveWords(definition))
+
   def parseBody(className: String, text: String): List[String] = {
     val innerBody = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1)
       .split("\\n")
@@ -41,27 +43,6 @@ case object ClassParser {
 
     simplifyMethods.andThen(filterConstructor(className))(innerBody.slice(1, innerBody.size - 1))
   }
-
-  private def simplifyMethods: List[String] => List[String] = lines => {
-    var inExpressions = 0
-
-    lines.foldLeft(List[String]()) {
-      (acc, line) => {
-        val accumulated = inExpressions match {
-          case 0 => acc :+ line.removeByRegex("(;|[{]|[}])*").trim
-          case _ => acc
-        }
-
-        if (line.contains("{")) inExpressions = inExpressions + 1
-        if (line.contains("}")) inExpressions = inExpressions - 1
-
-        accumulated
-      }
-    }
-  }
-
-  private def filterConstructor: String => List[String] => List[String] = className => lines =>
-    lines.filter(!_.matches(Regex.CONSTRUCTOR(className)))
 
   def parseDefinition(lines: List[String]): String = lines.find(_.matches(Regex.CLASS_DEFINITION)) match {
     case Some(definition) => definition.removeByRegex("[{]|[}]|;").trim
@@ -86,11 +67,6 @@ case object ClassParser {
       annotation: String <- annotatedLine.split("\\s")
       if annotation.matches(Regex.ANNOTATION)
     } yield annotation
-  }
-
-  private def isClassDefinition(str: String): Boolean = {
-    val regex = Regex.CLASS_DEFINITION
-    str.matches(regex)
   }
 
   def parseSuper(className: String, words: List[String]): Option[String] = {
@@ -131,6 +107,32 @@ case object ClassParser {
 
     else List()
   }
+
+  private def isClassDefinition(str: String): Boolean = {
+    val regex = Regex.CLASS_DEFINITION
+    str.matches(regex)
+  }
+
+  private def simplifyMethods: List[String] => List[String] = lines => {
+    var inExpressions = 0
+
+    lines.foldLeft(List[String]()) {
+      (acc, line) => {
+        val accumulated = inExpressions match {
+          case 0 => acc :+ line.removeByRegex("(;|[{]|[}])*").trim
+          case _ => acc
+        }
+
+        if (line.contains("{")) inExpressions = inExpressions + 1
+        if (line.contains("}")) inExpressions = inExpressions - 1
+
+        accumulated
+      }
+    }
+  }
+
+  private def filterConstructor: String => List[String] => List[String] = className => lines =>
+    lines.filter(!_.matches(Regex.CONSTRUCTOR(className)))
 
   private def effectiveWords(definition: String): List[String] = {
     definition.removeByRegex(";|[{]|[}]").split("\\s").toList
