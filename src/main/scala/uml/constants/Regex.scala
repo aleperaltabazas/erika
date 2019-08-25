@@ -10,7 +10,7 @@ case object Regex {
 
   val VISIBILITY: String = "(public|private|protected) ?"
 
-  val MODIFIERS: String = "(static|final|volatile|synchronized) ?"
+  val MODIFIERS: String = "(static|final|volatile|synchronized|abstract) ?"
 
   val CLASS: String = s"($ANNOTATION)*($VISIBILITY)?(final )?class [A-Z]\\w*($GENERIC)?( $INHERITANCE)?( $IMPLEMENTATION)?"
   val ABSTRACT_CLASS: String = s"($ANNOTATION)*($VISIBILITY)?abstract class [A-Z]\\w*($GENERIC)?( $INHERITANCE)?( " +
@@ -26,7 +26,5 @@ case object Regex {
 
   val ATTRIBUTE: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+($INITIALIZATION|;?)"
 
-  val METHOD: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+[(].*[)](;| ?{?)"
-
-  val foo = "(.* )?(class|interface|enum) [A-Z]\\w*( extends [A-Z]\\w*(<.*>)?)?( implements [A-Z]\\w*(<.*>)? ?(, ?[A-Z]\\w*(<.*>)? ?)*)? ?[{]?"
+  val METHOD: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+[(].*[)](;| ?[{]?)"
 }
