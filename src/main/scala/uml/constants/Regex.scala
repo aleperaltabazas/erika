@@ -18,5 +18,5 @@ case object Regex {
   val CONSTRUCTOR: String => String = className => s"($ANNOTATION)*($VISIBILITY)?$className[(].*[)] ?[{]?"
   val TYPE: String = s"\\w+($GENERIC)?"
   val ATTRIBUTE: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+($INITIALIZATION|;?)"
-  val METHOD: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+[(].*[)](;| ?[{]?)"
+  val METHOD: String = s"($ANNOTATION)*($VISIBILITY)?($MODIFIERS)*$TYPE \\w+[(].*[)](;| ?[{]?)"
 }

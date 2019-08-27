@@ -14,7 +14,8 @@ case object MethodParser {
   def parse(body: List[String]): List[Method] = {
     for {
       line <- body
-      if line.matches(Regex.METHOD)
+      val regex = Regex.METHOD
+      if line.matches(regex)
     } yield parseIntoBuilder(line).build
   }
 

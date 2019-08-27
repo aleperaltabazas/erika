@@ -21,4 +21,10 @@ object Implicits extends FlatSpec with Matchers {
     }
   }
 
+  implicit class RichList[T](list: List[T]) {
+    def shouldContain(t: T): Assertion = {
+      list.contains(t) shouldBe true
+    }
+  }
+
 }

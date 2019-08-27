@@ -7,11 +7,20 @@ import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
 import uml.model.{Attribute, Class, ClassTypes, Method}
 import uml.parser.ParseHelpers.GenericReplacement
+import uml.repository.{ClassBuilderRepository, ClassRepository}
 import uml.utils.Implicits.RichString
 
 case object ClassParser {
 
-  def parse(classes: List[String]): List[Class] = ???
+  def parse(classes: List[String]): List[Class] = {
+    val builders: List[ClassBuilder] = classes.map(clazz => parseIntoBuilder(clazz))
+    val classRepository: ClassRepository = new ClassRepository
+    val builderRepository: ClassBuilderRepository = new ClassBuilderRepository(builders)
+
+    builders.foreach(_.build(classRepository, builderRepository))
+
+    classRepository.getAll
+  }
 
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
@@ -117,15 +126,6 @@ case object ClassParser {
 
   private def filterPackages: String => String = text => text.removeByRegex("package .*;")
 
-  def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)
-
-  def parseDefinition(lines: List[String]): String = lines.find(_.matches(Regex.CLASS_DEFINITION)) match {
-    case Some(definition) => definition.removeByRegex("[{]|[}]|;").trim
-    case None => throw NoClassDefinitionError(s"No class definition found. Error text: ${lines.mkString("\\n")}")
-  }
-
-  def parseName(definition: String): String = parseName(definition, effectiveWords(definition))
-
   def parseName(definition: String, words: List[String]): String = {
     val name = words.find(_ == "class").orElse(words.find(_ == "enum")).orElse(words.find(_ == "interface"))
       .map(words.indexOf(_)) match {
@@ -141,5 +141,14 @@ case object ClassParser {
   private def effectiveWords(definition: String): List[String] = {
     definition.removeByRegex(";|[{]|[}]").split("\\s").toList
   }
+
+  def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)
+
+  def parseDefinition(lines: List[String]): String = lines.find(_.matches(Regex.CLASS_DEFINITION)) match {
+    case Some(definition) => definition.removeByRegex("[{]|[}]|;").trim
+    case None => throw NoClassDefinitionError(s"No class definition found. Error text: ${lines.mkString("\\n")}")
+  }
+
+  def parseName(definition: String): String = parseName(definition, effectiveWords(definition))
 
 }

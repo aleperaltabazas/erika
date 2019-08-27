@@ -1,8 +1,9 @@
 package uml.constants
 
-import test.utils.Implicits
+import org.scalatest.{FlatSpec, Matchers}
+import test.utils.Implicits._
 
-case class RegexTest() extends Implicits {
+case class RegexTest() extends FlatSpec with Matchers {
   "CONSTRUCTOR regex" should "match with the following" in {
     "Foo()" shouldMatch Regex.CONSTRUCTOR("Foo")
     "public Foo()" shouldMatch Regex.CONSTRUCTOR("Foo")

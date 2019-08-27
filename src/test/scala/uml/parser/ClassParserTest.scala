@@ -1,12 +1,13 @@
 package uml.parser
 
 import org.scalatest.{FlatSpec, Matchers}
+import test.utils.Implicits._
 import uml.builder.ClassBuilder
 import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
 import uml.model.ClassTypes._
 import uml.model.Modifiers._
 import uml.model.types.Type
-import uml.model.{Attribute, ClassTypes, Method}
+import uml.model.{Attribute, Class, Method}
 
 case class ClassParserTest() extends FlatSpec with Matchers {
   val classText: String = "public class Foo {\nprivate int foo;\nprivate int bar;\n public void doSomething() {\n " +
@@ -109,8 +110,64 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       List(Public),
       List(),
       List(),
-      ClassTypes.ConcreteClass,
+      ConcreteClass,
       None
     )
+
+    ClassParser.parseIntoBuilder(interfaceText) shouldBe ClassBuilder("Foo",
+      Nil,
+      List(Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil),
+        Method("getSomething", Type of "int", Nil, List(PackagePrivate), Nil)),
+      List(Public),
+      Nil,
+      Nil,
+      Interface,
+      None
+    )
+  }
+
+  "parse" should "work" in {
+    val foo = "public class Foo implements Biz{\nprivate int attr;\nprivate String bbb;\npublic int getAttr() " +
+      "{\nreturn attr;\n}\npublic void doSomething() {\n}\n}"
+    val baz = "public class Baz extends Foo {\n}"
+    val biz = "public interface Biz {\nvoid doSomething();\n}"
+
+    val classes: List[Class] = ClassParser.parse(List(foo, baz, biz))
+
+    val classBiz = Class("Biz",
+      Nil,
+      List(Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil)),
+      List(Public),
+      Nil,
+      None,
+      Nil,
+      Interface
+    )
+
+    val classFoo = Class("Foo",
+      List(Attribute("attr", Type of "int", List(Private), Nil),
+        Attribute("bbb", Type of "String", List(Private), Nil)),
+      List(Method("getAttr", Type of "int", Nil, List(Public), Nil),
+        Method("doSomething", Type of "void", Nil, List(Public), Nil)),
+      List(Public),
+      Nil,
+      None,
+      List(classBiz),
+      ConcreteClass
+    )
+
+    val classBaz = Class("Baz",
+      Nil,
+      Nil,
+      List(Public),
+      Nil,
+      Some(classFoo),
+      Nil,
+      ConcreteClass
+    )
+
+    classes shouldContain classBiz
+    classes shouldContain classBaz
+    classes shouldContain classFoo
   }
 }

@@ -18,7 +18,7 @@ case class ClassBuilder(name: String,
   def build(classes: ClassRepository, builders: ClassBuilderRepository): Unit = {
     builders.removeIf(_.name == name)
     declaredSuper.flatMap(parent => builders.find(_.name == parent)).foreach(_.build(classes, builders))
-    interfaces.flatMap(i => builders.findAll(_.name == i)).foreach(_.build(classes, builders))
+    builders.findAll(builder => interfaces.contains(builder.name)).foreach(_.build(classes, builders))
 
     val builtSuper: Option[Class] = declaredSuper.map(parent => classes.find(_.name == parent).getOrElse {
       throw BuildError(s"Error building class $name: parent $parent not built")
