@@ -1,8 +1,10 @@
 package uml.builder
 
+import uml.exception.BuildError
 import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
 import uml.model.{Attribute, Class, Method}
+import uml.repository.{ClassBuilderRepository, ClassRepository}
 
 case class ClassBuilder(name: String,
                         attributes: List[Attribute],
@@ -13,28 +15,21 @@ case class ClassBuilder(name: String,
                         classType: ClassType,
                         declaredSuper: Option[String]) extends Builder {
 
-  def buildWithDependencies(builtClasses: List[Class], builders: List[ClassBuilder]): (List[Class], List[ClassBuilder]) = {
-    (declaredSuper, interfaces) match {
-      case (None, Nil) => buildAlone(builders)
-      case (Some(parent), Nil) => buildWithParent(builtClasses, builders, parent)
-      case (None, is) => buildWithInterfaces(builtClasses, builders, is)
-      case (Some(parent), is) => buildWithParentAndInterfaces(builtClasses, builders, parent, is)
+  def build(classes: ClassRepository, builders: ClassBuilderRepository): Unit = {
+    builders.removeIf(_.name == name)
+    declaredSuper.flatMap(parent => builders.find(_.name == parent)).foreach(_.build(classes, builders))
+    interfaces.flatMap(i => builders.findAll(_.name == i)).foreach(_.build(classes, builders))
+
+    val builtSuper: Option[Class] = declaredSuper.map(parent => classes.find(_.name == parent).getOrElse {
+      throw BuildError(s"Error building class $name: parent $parent not built")
+    })
+
+    val builtInterfaces: List[Class] = classes.findAll(c => interfaces.contains(c.name))
+
+    if (builtInterfaces.length != interfaces.length) {
+      throw BuildError(s"Error creating interfaces, expected $interfaces, built ${builtInterfaces.map(_.name)}")
     }
+
+    classes.add(Class(name, attributes, methods, effectiveModifiers, annotations, builtSuper, builtInterfaces, classType))
   }
-
-  private def buildAlone(builders: List[ClassBuilder]): (List[Class], List[ClassBuilder]) = {
-    val self = Class(name, attributes, methods, effectiveModifiers, annotations, None, Nil, classType)
-    val remainingBuilders = builders.filterNot(_.name == name)
-
-    (List(self), remainingBuilders)
-  }
-
-  private def buildWithParent(builtClasses: List[Class], builders: List[ClassBuilder], parent: String): (List[Class],
-    List[ClassBuilder]) = ???
-
-  private def buildWithInterfaces(builtClasses: List[Class], builders: List[ClassBuilder], interfaces: List[String]): (List[Class],
-    List[ClassBuilder]) = ???
-
-  private def buildWithParentAndInterfaces(builtClasses: List[Class], builders: List[ClassBuilder], parent: String,
-                                           is: List[String]): (List[Class], List[ClassBuilder]) = ???
 }
