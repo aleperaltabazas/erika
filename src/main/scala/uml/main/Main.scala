@@ -14,5 +14,6 @@ object Main {
 
     val classesText = ReadFilesRecursively(basePath)
     val classes: List[Class] = ClassParser.parse(classesText)
+    print(classes.map(_.write).mkString("\n"))
   }
 }

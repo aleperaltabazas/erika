@@ -11,9 +11,11 @@ object Functions {
       val file = new File(filePath)
 
       if (file.isDirectory) {
-        file.listFiles.toList.flatMap(file => ReadFilesRecursively(file.getAbsolutePath))
+        file.listFiles.toList
+          .filter(f => f.isDirectory || f.getName.endsWith(".java"))
+          .flatMap(file => ReadFilesRecursively(file.getAbsolutePath))
       } else {
-        val lines = Source.fromFile(filePath).getLines.mkString(" ")
+        val lines = Source.fromFile(file, "ISO-8859-1").getLines.mkString("\n")
         List(lines)
       }
     }

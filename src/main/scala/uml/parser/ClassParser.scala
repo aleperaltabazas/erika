@@ -24,7 +24,7 @@ case object ClassParser {
 
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
-    val lines: List[String] = effectiveText.split("\n").toList
+    val lines: List[String] = effectiveText.split("\n|\t").toList
     val definition: String = parseDefinition(lines)
     val definitionWords: List[String] = effectiveWords(definition)
 
