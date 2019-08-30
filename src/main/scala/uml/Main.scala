@@ -1,8 +1,6 @@
-package uml.main
+package uml
 
-import uml.model.Class
-import uml.parser.ClassParser
-import uml.utils.Functions.ReadFilesRecursively
+import uml.io.{Reader, Writer}
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -12,8 +10,7 @@ object Main {
       case x :: y :: _ => (x, y)
     }
 
-    val classesText = ReadFilesRecursively(basePath)
-    val classes: List[Class] = ClassParser.parse(classesText)
-    print(classes.map(_.write).mkString("\n"))
+    val classFiles = Reader(basePath)
+    val writtenClasses = Writer(classFiles)
   }
 }

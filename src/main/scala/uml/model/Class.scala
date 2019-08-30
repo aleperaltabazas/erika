@@ -32,4 +32,7 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
 
     s"$definition$inheritance$implementation {\n$attributesText\n$methodsText\n}".trim
   }
+
+  def writeRelations: String = ???
+
 }
