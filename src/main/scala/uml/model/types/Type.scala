@@ -9,7 +9,7 @@ object Type {
 
   def apply(string: String): Type = {
     if (string.matches(".*<.*>")) {
-      val wrappingType: String = string.substring(0, string.indexOf("<"))
+      val wrappingType: String = string.takeWhile(_ != '<')
       val composingTypes: List[Type] = string.substring(string.indexOf("<") + 1, string.length - 1)
         .split("[|]")
         .map(Type(_))

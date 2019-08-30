@@ -4,4 +4,7 @@ import uml.model.Modifiers.Modifier
 import uml.model.types.Type
 
 case class Method(name: String, returnType: Type, arguments: List[Argument], modifiers: List[Modifier],
-                  annotations: List[String]) extends Modifiable
+                  annotations: List[String]) extends Modifiable {
+
+  def write: String = s"$name(${arguments.map(a => s"${a.write}").mkString(", ")}): ${returnType.name}"
+}

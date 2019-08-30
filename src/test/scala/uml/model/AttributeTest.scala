@@ -1,0 +1,17 @@
+package uml.model
+
+import org.scalatest.{FlatSpec, Matchers}
+import uml.model.Modifiers.Public
+import uml.model.types.Type
+
+case class AttributeTest() extends FlatSpec with Matchers {
+  val foo = Attribute("foo", Type of "int", List(Public), Nil)
+  val bar = Attribute("bar", Type of "List<String>", List(Public), Nil)
+  val baz = Attribute("baz", Type of "Map<String|List<String>>", Nil, Nil)
+
+  "write" should "work" in {
+    foo.write shouldBe "foo: int"
+    bar.write shouldBe "bar: List<String>"
+    baz.write shouldBe "baz: Map<String, List<String>>"
+  }
+}
