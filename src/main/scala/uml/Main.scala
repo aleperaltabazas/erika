@@ -11,6 +11,6 @@ object Main {
     }
 
     val classFiles = Reader(basePath)
-    val writtenClasses = Writer(classFiles)
+    val writtenClasses = Writer.classDiagram(classFiles)
   }
 }

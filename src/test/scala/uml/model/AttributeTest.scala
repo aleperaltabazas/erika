@@ -10,7 +10,7 @@ case class AttributeTest() extends FlatSpec with Matchers {
   val baz = Attribute("baz", Type of "Map<String|List<String>>", Nil, Nil)
 
   "write" should "work" in {
-    foo.write shouldBe "foo: int"
+    foo.write shouldBe "foo: Int"
     bar.write shouldBe "bar: List<String>"
     baz.write shouldBe "baz: Map<String, List<String>>"
   }

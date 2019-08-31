@@ -10,7 +10,7 @@ case class MethodTest() extends FlatSpec with Matchers {
     "Foo"), Argument("c", Type of "Bar")), Nil, Nil)
 
   "write" should "work" in {
-    foo.write shouldBe "foo(): int"
+    foo.write shouldBe "foo(): Int"
     baz.write shouldBe "baz(a: String): void"
     biz.write shouldBe "biz(a: List<String>, b: Foo, c: Bar): List<String>"
   }

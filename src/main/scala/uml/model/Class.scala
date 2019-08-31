@@ -12,7 +12,6 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
       .map(a => a.write)
       .mkString("\n")
 
-
     val methodsText = methods.filter(_.isVisible)
       .map(m => m.write)
       .mkString("\n")
@@ -33,6 +32,6 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
     s"$definition$inheritance$implementation {\n$attributesText\n$methodsText\n}".trim
   }
 
-  def writeRelations: String = ???
+  def writeRelations: String = ""
 
 }
