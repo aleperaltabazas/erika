@@ -20,7 +20,7 @@ case object MethodParser {
   }
 
   def parseIntoBuilder(line: String): MethodBuilder = {
-    val words: List[String] = line.split("\\s").toList
+    val words: List[String] = line.words
 
     val modifiers: List[Modifier] = ParseModifiers(words)
     val annotations: List[String] = ParseAnnotations(words)

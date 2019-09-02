@@ -22,6 +22,8 @@ object Implicits {
     }
 
     def removeByRegex(regex: String): String = str.replaceAll(regex, "")
+
+    def words: List[String] = str.split("\\s").toList
   }
 
 }

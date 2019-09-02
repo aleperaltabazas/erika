@@ -6,6 +6,7 @@ import uml.exception.AttributeParseError
 import uml.model.Attribute
 import uml.model.Modifiers.Modifier
 import uml.parser.ParseHelpers._
+import uml.utils.Implicits.RichString
 
 case object AttributeParser {
   def parse(body: List[String]): List[Attribute] = {
@@ -17,7 +18,7 @@ case object AttributeParser {
 
   def parseIntoBuilder: String => AttributeBuilder = line => {
     val effectiveLine = removeInitialization(line)
-    val words: List[String] = effectiveLine.split("\\s").toList
+    val words: List[String] = effectiveLine.words
 
     val modifiers: List[Modifier] = ParseModifiers(words)
     val annotations: List[String] = ParseAnnotations(words)

@@ -10,20 +10,25 @@ object Type {
   def of(string: String): Type = apply(string)
 
   def apply(_type: String): Type = {
-    StandardTypes.get(_type).getOrElse {
-      if (_type.matches(".*<.*>")) {
-        val (wrappingType: String, composingTypes: List[Type]) = unwrap(_type)
+    if (_type.matches(".*<.*>")) {
+      val (wrappingType: String, composingTypes: List[Type]) = unwrap(_type)
 
-        GenericType(wrappingType, composingTypes)
+      GenericType(wrappingType, composingTypes)
+    } else if (StandardTypes.shouldBuildGeneric(_type)) {
+      val placeholder = StandardTypes.getPlaceholder(_type).getOrElse {
+        throw new IllegalArgumentException(s"Tried to " +
+          s"build ${_type} as generic, but no matching placeholder was found")
       }
-
-      else SimpleType(_type)
+      val any = List.fill(placeholder.arity)(StandardTypes.ANY)
+      placeholder(any)
+    } else {
+      StandardTypes.getType(_type).getOrElse(SimpleType(_type))
     }
   }
 
   def unwrap(genericType: String): (String, List[Type]) = {
     val wrappingType: String = genericType.takeWhile(_ != '<')
-    val composingTypes: List[Type] = genericType.substring(genericType.indexOf("<") + 1, genericType.length - 1)
+    val composingTypes: List[Type] = genericType.drop(genericType.indexOf("<") + 1).dropRight(1)
       .split("[|]")
       .map(Type(_))
       .toList

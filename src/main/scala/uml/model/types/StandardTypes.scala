@@ -1,28 +1,26 @@
 package uml.model.types
 
-case class StandardTypes() {
-   val INT: Type = Type of "Int"
-   val CHAR: Type = Type of "Character"
-   val DOUBLE: Type = Type of "Double"
-   val STRING: Type = Type of "String"
-   val FLOAT: Type = Type of "Float"
-   val BOOL: Type = Type of "Boolean"
-   val LONG: Type = Type of "Long"
-   val SHORT: Type = Type of "Short"
-   val VOID: Type = Type of "void"
-   val BYTE: Type = Type of "Byte"
-   val ANY: Type = Type of "Any"
-   val OBJECT: Type = Type of "Object"
+case object StandardTypes {
+  val INT: Type = SimpleType("Int")
+  val CHAR: Type = SimpleType("Character")
+  val DOUBLE: Type = SimpleType("Double")
+  val STRING: Type = SimpleType("String")
+  val FLOAT: Type = SimpleType("Float")
+  val BOOL: Type = SimpleType("Boolean")
+  val LONG: Type = SimpleType("Long")
+  val SHORT: Type = SimpleType("Short")
+  val VOID: Type = SimpleType("void")
+  val BYTE: Type = SimpleType("Byte")
+  val ANY: Type = SimpleType("Any")
+  val OBJECT: Type = SimpleType("Object")
 
-   val LIST: GenericPlaceholder = GenericPlaceholder("List", 1)
-   val QUEUE: GenericPlaceholder = GenericPlaceholder("Queue", 1)
-   val STACK: GenericPlaceholder = GenericPlaceholder("Stack", 1)
-   val SET: GenericPlaceholder = GenericPlaceholder("Set", 1)
-   val MAP: GenericPlaceholder = GenericPlaceholder("Map", 2)
-   val MAYBE: GenericPlaceholder = GenericPlaceholder("Maybe", 1)
-   val COLLECTION: GenericPlaceholder = GenericPlaceholder("Collection", 1)
-
-   val DEFINED_GENERICS: List[GenericPlaceholder] = List(LIST, QUEUE, STACK, SET, MAP, MAYBE, COLLECTION)
+  val LIST: GenericPlaceholder = GenericPlaceholder("List", 1)
+  val QUEUE: GenericPlaceholder = GenericPlaceholder("Queue", 1)
+  val STACK: GenericPlaceholder = GenericPlaceholder("Stack", 1)
+  val SET: GenericPlaceholder = GenericPlaceholder("Set", 1)
+  val MAP: GenericPlaceholder = GenericPlaceholder("Map", 2)
+  val MAYBE: GenericPlaceholder = GenericPlaceholder("Maybe", 1)
+  val COLLECTION: GenericPlaceholder = GenericPlaceholder("Collection", 1)
 
   def getType(name: String): Option[Type] = name match {
     case "int" | "Integer" => Option(INT)
@@ -50,5 +48,5 @@ case class StandardTypes() {
     case _ => None
   }
 
-  def shouldBuildGeneric(name: String): Boolean = DEFINED_GENERICS.exists(_.genericClass == name)
+  def shouldBuildGeneric(name: String): Boolean = getPlaceholder(name).isDefined
 }
