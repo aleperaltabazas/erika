@@ -23,7 +23,16 @@ object Implicits {
 
     def removeByRegex(regex: String): String = str.replaceAll(regex, "")
 
-    def words: List[String] = str.split("\\s").toList
+    def words: List[String] = str.trim.split("\\s").toList
+  }
+
+  implicit class RichList[T](list: List[T]) {
+    def initOrNil: List[T] = {
+      list match {
+        case Nil => Nil
+        case xs :+ _ => xs
+      }
+    }
   }
 
 }

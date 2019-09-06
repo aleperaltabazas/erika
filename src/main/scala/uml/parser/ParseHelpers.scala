@@ -23,6 +23,26 @@ case object ParseHelpers {
     }
   }
 
+  case class AccumulateAnnotationsUntil(untilRegex: String) {
+    def apply(lines: List[String], discardWith: String): List[String] = lines.foldLeft((List[String](), List[String]())) {
+      (accum, line) => {
+        accum match {
+          case (accumulated, annotations) =>
+            if (line.matches(untilRegex)) {
+              val joinedAnnotations = annotations.mkString("\n")
+              (accumulated ++ List(joinedAnnotations.concat(s"\n$line")), Nil)
+            } else if (line.matches(Regex.ANNOTATION)) {
+              (accumulated, annotations ++ List(line))
+            } else if (line.matches(discardWith)) {
+              (accumulated, Nil)
+            } else {
+              accum
+            }
+        }
+      }
+    }._1
+  }
+
   case object ParseTypeAndName {
     def apply[R <: RuntimeException](words: List[String], modifiers: List[Modifier], annotations: List[String])
                                     (implicit ex: String => R): (String, String) = {

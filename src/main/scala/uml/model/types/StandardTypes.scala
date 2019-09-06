@@ -9,7 +9,7 @@ case object StandardTypes {
   val BOOL: Type = SimpleType("Boolean")
   val LONG: Type = SimpleType("Long")
   val SHORT: Type = SimpleType("Short")
-  val VOID: Type = SimpleType("void")
+  val VOID: Type = SimpleType("Void")
   val BYTE: Type = SimpleType("Byte")
   val ANY: Type = SimpleType("Any")
   val OBJECT: Type = SimpleType("Object")

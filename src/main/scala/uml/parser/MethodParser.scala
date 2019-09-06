@@ -6,17 +6,13 @@ import uml.exception.{ArgumentParseError, MethodParseError}
 import uml.model.Modifiers.Modifier
 import uml.model.types.Type
 import uml.model.{Argument, Method}
-import uml.parser.ParseHelpers.{GenericReplacement, ParseAnnotations, ParseModifiers, ParseTypeAndName}
+import uml.parser.ParseHelpers.{AccumulateAnnotationsUntil, GenericReplacement, ParseAnnotations, ParseModifiers, ParseTypeAndName}
 import uml.utils.Implicits.RichString
 
 case object MethodParser {
 
   def parse(body: List[String]): List[Method] = {
-    for {
-      line <- body
-      val regex = Regex.METHOD
-      if line.matches(regex)
-    } yield parseIntoBuilder(line).build
+    AccumulateAnnotationsUntil(Regex.METHOD)(body, Regex.ATTRIBUTE).map(parseIntoBuilder).map(_.build)
   }
 
   def parseIntoBuilder(line: String): MethodBuilder = {

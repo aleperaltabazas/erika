@@ -19,6 +19,7 @@ case class TypeTest() extends FlatSpec with Matchers {
     GenericType("Map", List(SimpleType("String"), GenericType("List", List(SimpleType("String"))))).name shouldBe
       "Map<String, List<String>>"
     (Type of "Integer").name shouldBe "Int"
+    (Type of "double").name shouldBe "Double"
     (Type of "List").name shouldBe "List<Any>"
     (Type of "Map").name shouldBe "Map<Any, Any>"
   }

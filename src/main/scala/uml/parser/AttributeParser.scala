@@ -6,14 +6,11 @@ import uml.exception.AttributeParseError
 import uml.model.Attribute
 import uml.model.Modifiers.Modifier
 import uml.parser.ParseHelpers._
-import uml.utils.Implicits.RichString
+import uml.utils.Implicits._
 
 case object AttributeParser {
   def parse(body: List[String]): List[Attribute] = {
-    for {
-      line <- body
-      if line.matches(Regex.ATTRIBUTE)
-    } yield parseIntoBuilder.andThen(_.build)(line)
+    AccumulateAnnotationsUntil(Regex.ATTRIBUTE)(body, Regex.METHOD).map(parseIntoBuilder).map(_.build)
   }
 
   def parseIntoBuilder: String => AttributeBuilder = line => {
