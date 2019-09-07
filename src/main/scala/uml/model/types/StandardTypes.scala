@@ -49,4 +49,9 @@ case object StandardTypes {
   }
 
   def shouldBuildGeneric(name: String): Boolean = getPlaceholder(name).isDefined
+
+  def contains(_type: Type): Boolean = standardTypes.contains(_type)
+
+  private def standardTypes: List[Type] = List(INT, CHAR, DOUBLE, FLOAT, STRING, BOOL, LONG, SHORT, VOID, BYTE, ANY,
+    OBJECT)
 }

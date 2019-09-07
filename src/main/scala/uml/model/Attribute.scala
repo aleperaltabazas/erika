@@ -1,7 +1,7 @@
 package uml.model
 
 import uml.model.Modifiers.Modifier
-import uml.model.types.Type
+import uml.model.types.{StandardTypes, Type}
 
 case class Attribute(name: String, attributeType: Type, modifiers: List[Modifier], annotations: List[String])
   extends Modifiable {
@@ -9,4 +9,7 @@ case class Attribute(name: String, attributeType: Type, modifiers: List[Modifier
     .matchesWith("Set")
 
   def write: String = s"$name: ${attributeType.name}"
+
+  def isStandard: Boolean = StandardTypes.contains(attributeType)
+
 }

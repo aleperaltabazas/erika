@@ -2,12 +2,11 @@ package uml.model
 
 import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
+import uml.model.types.{GenericType, SimpleType}
 
 case class Class(name: String, attributes: List[Attribute], methods: List[Method], modifiers: List[Modifier],
                  annotations: List[String], parent: Option[Class], interfaces: List[Class], classType: ClassType)
   extends Modifiable {
-
-  def hasGetterFor(attribute: Attribute): Boolean = methods.exists(_.name == s"get${attribute.name.capitalize}")
 
   def write: String = {
     val attributesText = attributes.filter(a => a.isVisible || hasGetterFor(a))
@@ -35,11 +34,17 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
   }
 
   def writeRelations: String = {
-    attributes.map {
-      attr =>
-        if (attr.isCollection) s"$name --> \"*\" ${attr.attributeType.name}"
-        else s"$name --> ${attr.attributeType.name}"
-    }.mkString("\n")
+    attributes
+      .filter(attr => !attr.isStandard && (attr.isVisible || hasGetterFor(attr)))
+      .map {
+        attr =>
+          attr.attributeType match {
+            case SimpleType(name) => s"${this.name} --> $name"
+            case GenericType(_, composingTypes) => name + " --> \"*\" " + composingTypes.last.name
+          }
+      }.mkString("\n")
   }
+
+  private def hasGetterFor(attribute: Attribute): Boolean = methods.exists(_.name == s"get${attribute.name.capitalize}")
 
 }
