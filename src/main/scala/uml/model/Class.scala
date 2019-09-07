@@ -13,7 +13,7 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
       .map(a => a.write)
       .mkString("\n")
 
-    val methodsText = methods.filter(_.isVisible)
+    val methodsText = methods.filter(method => method.isVisible && !method.isBoilerplate(this))
       .map(m => m.write)
       .mkString("\n")
 
@@ -35,7 +35,7 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
 
   def writeRelations: String = {
     attributes
-      .filter(attr => !attr.isStandard && (attr.isVisible || hasGetterFor(attr)))
+      .filter(attr => !attr.isStandard)
       .map {
         attr =>
           attr.attributeType match {

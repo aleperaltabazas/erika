@@ -10,5 +10,7 @@ case class WriterTest() extends FlatSpec with Matchers {
 
     characterClass.write shouldBe expectedWrite
     characterClass.writeRelations shouldBe ""
+
+    Writer.classDiagram(List(characterClass)) shouldBe s"@startuml\n$expectedWrite\n@enduml"
   }
 }
