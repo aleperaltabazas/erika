@@ -35,6 +35,6 @@ case class ClassTest() extends FlatSpec with Matchers {
       ConcreteClass)
 
     foo.writeRelations shouldBe ""
-    qux.writeRelations shouldBe "Qux --> Foo\nQux --> \"*\" Baz"
+    qux.writeRelations shouldBe "Qux --> Foo\nQux --> Bar\nQux --> \"*\" Baz"
   }
 }
