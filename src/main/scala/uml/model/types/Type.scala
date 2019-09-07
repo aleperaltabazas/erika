@@ -3,7 +3,7 @@ package uml.model.types
 trait Type {
   def name: String
 
-  def matchesWith(name: String): Boolean = this.name == name
+  def matchesWith(name: String): Boolean
 }
 
 object Type {

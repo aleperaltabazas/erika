@@ -7,8 +7,10 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
                  annotations: List[String], parent: Option[Class], interfaces: List[Class], classType: ClassType)
   extends Modifiable {
 
+  def hasGetterFor(attribute: Attribute): Boolean = methods.exists(_.name == s"get${attribute.name.capitalize}")
+
   def write: String = {
-    val attributesText = attributes.filter(_.isVisible)
+    val attributesText = attributes.filter(a => a.isVisible || hasGetterFor(a))
       .map(a => a.write)
       .mkString("\n")
 
@@ -32,6 +34,12 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
     s"$definition$inheritance$implementation {\n$attributesText\n$methodsText\n}".trim
   }
 
-  def writeRelations: String = ""
+  def writeRelations: String = {
+    attributes.map {
+      attr =>
+        if (attr.isCollection) s"$name --> \"*\" ${attr.attributeType.name}"
+        else s"$name --> ${attr.attributeType.name}"
+    }.mkString("\n")
+  }
 
 }

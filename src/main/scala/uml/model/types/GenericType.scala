@@ -5,4 +5,6 @@ case class GenericType(wrappingType: String, composingTypes: List[Type]) extends
     val generic = composingTypes.map(_.name).mkString(", ")
     s"$wrappingType<$generic>"
   }
+
+  override def matchesWith(name: String): Boolean = wrappingType == name
 }
