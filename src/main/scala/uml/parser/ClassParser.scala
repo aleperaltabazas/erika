@@ -6,7 +6,7 @@ import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeE
 import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
 import uml.model.{Attribute, Class, ClassTypes, Method}
-import uml.parser.ParseHelpers.GenericReplacement
+import uml.parser.ParseHelpers.{AnnotationTrim, GenericReplacement}
 import uml.repository.{ClassBuilderRepository, ClassRepository}
 import uml.utils.Implicits.RichString
 
@@ -17,7 +17,10 @@ case object ClassParser {
     val classRepository: ClassRepository = new ClassRepository
     val builderRepository: ClassBuilderRepository = new ClassBuilderRepository(builders)
 
-    builders.foreach(_.build(classRepository, builderRepository))
+    while (!builderRepository.isEmpty) {
+      val builder = builderRepository.head
+      builder.build(classRepository, builderRepository)
+    }
 
     classRepository.getAll
   }
@@ -30,7 +33,7 @@ case object ClassParser {
 
     val className: String = parseName(definition, definitionWords)
     val classType: ClassType = parseType(className, definitionWords)
-    val annotations: List[String] = parseAnnotations(text)
+    val annotations: List[String] = parseAnnotations(text).map(_.trim)
     val body: List[String] = parseBody(className, text)
     val attributes: List[Attribute] = AttributeParser.parse(body)
     val methods: List[Method] = MethodParser.parse(body)
@@ -70,13 +73,13 @@ case object ClassParser {
   private def filterConstructor: String => List[String] => List[String] = className => lines =>
     lines.filter(!_.matches(Regex.CONSTRUCTOR(className)))
 
-  def parseAnnotations(text: String): List[String] = {
-    for {
-      annotatedLine: String <- text.split("\n").takeWhile(!isClassDefinition(_)).toList
-      annotation: String <- annotatedLine.split("\\s")
-      if annotation.matches(Regex.ANNOTATION)
-    } yield annotation
-  }
+  def parseAnnotations(text: String): List[String] = for {
+    annotatedLine: String <- text.split("\n").takeWhile(!isClassDefinition(_))
+      .toList
+      .map(AnnotationTrim(_))
+      .flatMap(_.split("\\s"))
+    if annotatedLine.matches(Regex.ANNOTATION)
+  } yield annotatedLine
 
   private def isClassDefinition(str: String): Boolean = {
     val regex = Regex.CLASS_DEFINITION

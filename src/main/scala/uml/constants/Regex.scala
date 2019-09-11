@@ -6,7 +6,7 @@ case object Regex {
   val INHERITANCE: String = s"extends [A-Z]\\w*($GENERIC)?"
   val IMPLEMENTATION: String = s"implements [A-Z]\\w*($GENERIC)? ?(, ?[A-Z]\\w*($GENERIC)? ?)*"
 
-  val ANNOTATION: String = "@[A-Z]\\w*(\\n| )?"
+  val ANNOTATION: String = "@[A-Z]\\w*([(].+[)])?(\\n| )?"
   val VISIBILITY: String = "(public|private|protected) ?"
   val MODIFIERS: String = "(static|final|volatile|synchronized|abstract) ?"
   val CLASS: String = s"($ANNOTATION)*($VISIBILITY)?(final )?class [A-Z]\\w*($GENERIC)?( $INHERITANCE)?( $IMPLEMENTATION)?"

@@ -8,12 +8,16 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
                  annotations: List[String], parent: Option[Class], interfaces: List[Class], classType: ClassType)
   extends Modifiable {
 
+  private def isInherited(attribute: Attribute): Boolean = parent.exists(p => p.attributes.exists(_.name == attribute.name))
+
+  private def isInherited(method: Method): Boolean = parent.exists(p => p.methods.exists(_.name == method.name))
+
   def write: String = {
-    val attributesText = attributes.filter(a => a.isVisible || hasGetterFor(a))
+    val attributesText = attributes.filter(a => (a.isVisible || hasGetterFor(a)) && !isInherited(a))
       .map(a => a.write)
       .mkString("\n")
 
-    val methodsText = methods.filter(method => method.isVisible && !method.isBoilerplate(this))
+    val methodsText = methods.filter(method => method.isVisible && !method.isBoilerplate(this) && !isInherited(method))
       .map(m => m.write)
       .mkString("\n")
 

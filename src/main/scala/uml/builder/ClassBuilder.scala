@@ -16,7 +16,6 @@ case class ClassBuilder(name: String,
                         declaredSuper: Option[String]) extends Builder {
 
   def build(classes: ClassRepository, builders: ClassBuilderRepository): Unit = {
-    builders.removeIf(_.name == name)
     declaredSuper.flatMap(parent => builders.find(_.name == parent)).foreach(_.build(classes, builders))
     builders.findAll(builder => interfaces.contains(builder.name)).foreach(_.build(classes, builders))
 
@@ -31,5 +30,6 @@ case class ClassBuilder(name: String,
     }
 
     classes.add(Class(name, attributes, methods, effectiveModifiers, annotations, builtSuper, builtInterfaces, classType))
+    builders.removeIf(_ == this)
   }
 }

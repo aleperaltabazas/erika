@@ -12,4 +12,10 @@ abstract class AbstractRepository[T](private var elements: List[T] = List()) {
   def add(t: T): Unit = elements = t :: elements
 
   def getAll: List[T] = elements
+
+  def foreach(callback: T => Unit): Unit = elements.foreach(callback)
+
+  def isEmpty: Boolean = elements.isEmpty
+
+  def head: T = elements.head
 }

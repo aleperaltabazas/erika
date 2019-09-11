@@ -70,6 +70,20 @@ case object ParseHelpers {
     }
   }
 
+  case object AnnotationTrim {
+    def apply(str: String): String = {
+      var inParenthesis = 0
+
+      str.foldLeft("") { (acc: String, char) =>
+        if (char == '(') inParenthesis = inParenthesis + 1
+        if (char == ')') inParenthesis = inParenthesis - 1
+
+        if (inParenthesis > 0 && char == ' ') acc
+        else acc.appended(char)
+      }
+    }
+  }
+
   case object UnwrapGeneric {
     def apply(str: String): String = {
       if (str.contains("<")) str.substring(0, str.indexOf('<'))
