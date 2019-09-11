@@ -24,4 +24,19 @@ case object Parsers {
 
   case class Outer(left: Char, right: Char) extends BoundedParser(left, right, outer => outer == 0)
 
+  implicit class CharParser(left: Char) {
+
+    case class OngoingInnerParsing(left: Char, string: String) {
+      def >>(right: Char): String = Inner(left, right)(string)
+    }
+
+    case class OngoingOuterParsing(left: Char, string: String) {
+      def <<(right: Char): String = Outer(left, right)(string)
+    }
+
+    def <<(str: String): OngoingInnerParsing = OngoingInnerParsing(left, str)
+
+    def >>(str: String): OngoingOuterParsing = OngoingOuterParsing(left, str)
+  }
+
 }

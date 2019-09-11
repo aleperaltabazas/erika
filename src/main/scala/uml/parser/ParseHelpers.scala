@@ -3,6 +3,7 @@ package uml.parser
 import uml.constants.Regex
 import uml.exception.ParseError
 import uml.model.Modifiers.Modifier
+import uml.parser.Parsers.Inner
 import uml.utils.Implicits.RichString
 
 case object ParseHelpers {

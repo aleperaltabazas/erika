@@ -7,6 +7,7 @@ import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
 import uml.model.{Attribute, Class, ClassTypes, Method}
 import uml.parser.ParseHelpers.{AnnotationTrim, GenericReplacement}
+import uml.parser.Parsers.CharParser
 import uml.repository.{ClassBuilderRepository, ClassRepository}
 import uml.utils.Implicits.RichString
 
@@ -45,15 +46,19 @@ case object ClassParser {
   }
 
   def parseBody(className: String, text: String): List[String] = {
-    val innerBody = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1)
-      .split("\\n")
-      .toList
+    val innerBody = ('{' << text >> '}').split("\\n").toList.filter(line => !line.isEmpty)
 
-    simplifyMethods.andThen(filterConstructor(className))(innerBody.slice(1, innerBody.size - 1))
+    simplifyMethods.andThen(filterConstructor(className))(innerBody)
   }
 
   private def simplifyMethods: List[String] => List[String] = lines => {
     var inExpressions = 0
+
+    val a = lines.mkString("\n").replaceAll("[{]\n", "{")
+      .replaceAll("\n[}]", "}")
+      .split("\n")
+      .map(line => '{' >> line << '}')
+      .map(line => line.removeByRegex("[{]|[}]"))
 
     lines.foldLeft(List[String]()) {
       (acc, line) => {
