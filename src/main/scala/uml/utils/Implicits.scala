@@ -23,6 +23,8 @@ object Implicits {
 
     def removeByRegex(regex: String): String = str.replaceAll(regex, "")
 
+    def splitBy(regex: String): List[String] = str.split(regex).toList
+
     def words: List[String] = str.trim.split("\\s").toList
   }
 

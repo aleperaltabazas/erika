@@ -28,7 +28,7 @@ case object ClassParser {
 
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
-    val lines: List[String] = effectiveText.split("\n|\t").toList
+    val lines: List[String] = effectiveText.splitBy("\n|\t")
     val definition: String = parseDefinition(lines)
     val definitionWords: List[String] = effectiveWords(definition)
 
@@ -46,43 +46,25 @@ case object ClassParser {
   }
 
   def parseBody(className: String, text: String): List[String] = {
-    val innerBody = ('{' << text >> '}').split("\\n").toList.filter(line => !line.isEmpty)
+    val innerBody = ('{' << text >> '}').splitBy("\\n").filter(line => !line.isEmpty)
 
     simplifyMethods.andThen(filterConstructor(className))(innerBody)
   }
 
   private def simplifyMethods: List[String] => List[String] = lines => {
-    var inExpressions = 0
-
-    val a = lines.mkString("\n").replaceAll("[{]\n", "{")
+    lines.mkString("\n").replaceAll("[{]\n", "{")
       .replaceAll("\n[}]", "}")
-      .split("\n")
-      .map(line => '{' >> line << '}')
-      .map(line => line.removeByRegex("[{]|[}]"))
-
-    lines.foldLeft(List[String]()) {
-      (acc, line) => {
-        val accumulated = inExpressions match {
-          case 0 => acc :+ line.removeByRegex("(;|[{]|[}])*").trim
-          case _ => acc
-        }
-
-        if (line.contains("{")) inExpressions = inExpressions + 1
-        if (line.contains("}")) inExpressions = inExpressions - 1
-
-        accumulated
-      }
-    }
+      .splitBy("\n")
+      .map(line => ('{' >> line << '}').removeByRegex("([{]|[}]|;)*").trim)
   }
 
   private def filterConstructor: String => List[String] => List[String] = className => lines =>
     lines.filter(!_.matches(Regex.CONSTRUCTOR(className)))
 
   def parseAnnotations(text: String): List[String] = for {
-    annotatedLine: String <- text.split("\n").takeWhile(!isClassDefinition(_))
-      .toList
+    annotatedLine: String <- text.splitBy("\n").takeWhile(!isClassDefinition(_))
       .map(AnnotationTrim(_))
-      .flatMap(_.split("\\s"))
+      .flatMap(_.splitBy("\\s"))
     if annotatedLine.matches(Regex.ANNOTATION)
   } yield annotatedLine
 
@@ -147,7 +129,7 @@ case object ClassParser {
   }
 
   private def effectiveWords(definition: String): List[String] = {
-    definition.removeByRegex(";|[{]|[}]").split("\\s").toList
+    definition.removeByRegex(";|[{]|[}]").splitBy("\\s")
   }
 
   def parseDefinition(lines: Array[String]): String = parseDefinition(lines.toList)

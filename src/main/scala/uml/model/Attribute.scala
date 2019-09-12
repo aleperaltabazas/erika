@@ -9,8 +9,8 @@ case class Attribute(name: String, attributeType: Type, modifiers: List[Modifier
 
   def setterMethod: String = s"set${name.capitalize}"
 
-  def isCollection: Boolean = attributeType.matchesWith("List") || attributeType.matchesWith("Map") || attributeType
-    .matchesWith("Set")
+  def isCollection: Boolean = attributeType.matchesWith("List") || attributeType.matchesWith("Map") ||
+    attributeType.matchesWith("Set")
 
   def write: String = s"$name: ${attributeType.name}"
 

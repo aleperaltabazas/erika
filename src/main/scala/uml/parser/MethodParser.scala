@@ -40,7 +40,7 @@ case object MethodParser {
         for {
           arg <- mappedString
         } yield {
-          arg.split("\\s").toList match {
+          arg.splitBy("\\s") match {
             case _ :+ _type :+ name if !name.isEmpty && !_type.isEmpty => Argument(name, Type(_type))
             case _ => throw ArgumentParseError(s"Error parsing argument $arg")
           }

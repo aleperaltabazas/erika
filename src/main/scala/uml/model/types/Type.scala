@@ -1,5 +1,7 @@
 package uml.model.types
 
+import uml.utils.Implicits.RichString
+
 trait Type {
   def name: String
 
@@ -29,9 +31,8 @@ object Type {
   def unwrap(genericType: String): (String, List[Type]) = {
     val wrappingType: String = genericType.takeWhile(_ != '<')
     val composingTypes: List[Type] = genericType.drop(genericType.indexOf("<") + 1).dropRight(1)
-      .split("[|]")
+      .splitBy("[|]")
       .map(Type(_))
-      .toList
     (wrappingType, composingTypes)
   }
 }
