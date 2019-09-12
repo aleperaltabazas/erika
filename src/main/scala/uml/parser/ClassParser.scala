@@ -124,7 +124,7 @@ case object ClassParser {
       case _ => throw NoClassDefinitionError(s"No class definition could be parsed for definition $definition")
     }
 
-    if (name.contains("<")) name.substring(0, name.indexOf('<'))
+    if (name.contains("<")) name.take(name.indexOf('<'))
     else name
   }
 

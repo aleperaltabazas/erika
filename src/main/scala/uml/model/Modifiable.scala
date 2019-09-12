@@ -1,6 +1,6 @@
 package uml.model
 
-import uml.model.Modifiers.{Modifier, PackagePrivate}
+import uml.model.Modifiers.Modifier
 
 trait Modifiable {
   def modifiers: List[Modifier]

@@ -1,7 +1,5 @@
 package items;
 
-import character.Character;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

@@ -3,7 +3,6 @@ package uml.parser
 import uml.constants.Regex
 import uml.exception.ParseError
 import uml.model.Modifiers.Modifier
-import uml.parser.Parsers.Inner
 import uml.utils.Implicits.RichString
 
 case object ParseHelpers {
@@ -49,7 +48,7 @@ case object ParseHelpers {
                                     (implicit ex: String => R): (String, String) = {
       words.drop(modifiers.size + annotations.size) match {
         case _type :: name :: _ =>
-          if (name.contains("(")) (name.substring(0, name.indexOf("(")), _type)
+          if (name.contains("(")) (name.take(name.indexOf("(")), _type)
           else (name, _type)
         case _ => throw ex.apply(words.mkString(" "))
       }
@@ -87,7 +86,7 @@ case object ParseHelpers {
 
   case object UnwrapGeneric {
     def apply(str: String): String = {
-      if (str.contains("<")) str.substring(0, str.indexOf('<'))
+      if (str.contains("<")) str.take(str.indexOf('<'))
       else str
     }
   }

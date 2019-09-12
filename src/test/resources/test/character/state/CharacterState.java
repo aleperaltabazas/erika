@@ -1,7 +1,5 @@
 package character.state;
 
-import character.Character;
-
 import javax.persistence.*;
 
 @Entity

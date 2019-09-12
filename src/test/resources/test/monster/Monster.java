@@ -1,6 +1,5 @@
 package monster;
 
-import character.Character;
 import monster.state.MonsterState;
 
 public class Monster {

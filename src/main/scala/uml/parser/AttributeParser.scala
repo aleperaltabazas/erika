@@ -25,7 +25,7 @@ case object AttributeParser {
   }
 
   private def removeInitialization(line: String): String = {
-    Option(line).filter(_.contains("=")).map(l => l.substring(0, l.indexOf("="))).getOrElse(line)
+    Option(line).filter(_.contains("=")).map(l => l.take(l.indexOf("="))).getOrElse(line)
   }
 
 }
