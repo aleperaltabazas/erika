@@ -4,10 +4,9 @@ import org.scalatest.{FlatSpec, Matchers}
 import test.utils.Implicits._
 import uml.builder.ClassBuilder
 import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
-import uml.model.ClassTypes._
 import uml.model.Modifiers._
 import uml.model.types.Type
-import uml.model.{Attribute, Class, Method}
+import uml.model.{ActualClass, Attribute, Class, ClassTypes, Interface, Method}
 
 case class ClassParserTest() extends FlatSpec with Matchers {
   val classText: String = "public class Foo {\nprivate int foo;\nprivate int bar;\n public void doSomething() {\n " +
@@ -71,10 +70,10 @@ case class ClassParserTest() extends FlatSpec with Matchers {
   }
 
   "parseType" should "work" in {
-    ClassParser.parseType("Foo", "public class Foo".split("\\s").toList) shouldBe ConcreteClass
-    ClassParser.parseType("Foo", "public abstract class Foo".split("\\s").toList) shouldBe AbstractClass
-    ClassParser.parseType("Foo", "interface Foo extends Bar".split("\\s").toList) shouldBe Interface
-    ClassParser.parseType("Foo", "public enum Foo".split("\\s").toList) shouldBe Enum
+    ClassParser.parseType("Foo", "public class Foo".split("\\s").toList) shouldBe ClassTypes.ConcreteClass
+    ClassParser.parseType("Foo", "public abstract class Foo".split("\\s").toList) shouldBe ClassTypes.AbstractClass
+    ClassParser.parseType("Foo", "interface Foo extends Bar".split("\\s").toList) shouldBe ClassTypes.Interface
+    ClassParser.parseType("Foo", "public enum Foo".split("\\s").toList) shouldBe ClassTypes.Enum
   }
 
   "parseType" should "fail" in {
@@ -82,9 +81,9 @@ case class ClassParserTest() extends FlatSpec with Matchers {
   }
 
   "parseModifiers" should "work" in {
-    ClassParser.parseModifiers(ConcreteClass, "public final class Foo".split("\\s").toList) shouldBe List(Public, Final)
-    ClassParser.parseModifiers(AbstractClass, "abstract public class Foo".split("\\s").toList) shouldBe List(Abstract, Public)
-    ClassParser.parseModifiers(Interface, "public interface Foo".split("\\s").toList) shouldBe List(Public)
+    ClassParser.parseModifiers(ClassTypes.ConcreteClass, "public final class Foo".split("\\s").toList) shouldBe List(Public, Final)
+    ClassParser.parseModifiers(ClassTypes.AbstractClass, "abstract public class Foo".split("\\s").toList) shouldBe List(Abstract, Public)
+    ClassParser.parseModifiers(ClassTypes.Interface, "public interface Foo".split("\\s").toList) shouldBe List(Public)
   }
 
   "parseInterfaces" should "work" in {
@@ -110,7 +109,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       List(Public),
       List(),
       List(),
-      ConcreteClass,
+      ClassTypes.ConcreteClass,
       None
     )
 
@@ -121,7 +120,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       List(Public),
       Nil,
       Nil,
-      Interface,
+      ClassTypes.Interface,
       None
     )
   }
@@ -134,17 +133,14 @@ case class ClassParserTest() extends FlatSpec with Matchers {
 
     val classes: List[Class] = ClassParser.parse(List(foo, baz, biz))
 
-    val classBiz = Class("Biz",
-      Nil,
+    val classBiz = Interface("Biz",
       List(Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil)),
       List(Public),
       Nil,
-      None,
-      Nil,
-      Interface
+      None
     )
 
-    val classFoo = Class("Foo",
+    val classFoo = ActualClass("Foo",
       List(Attribute("attr", Type of "int", List(Private), Nil),
         Attribute("bbb", Type of "String", List(Private), Nil)),
       List(Method("getAttr", Type of "int", Nil, List(Public), Nil),
@@ -153,17 +149,17 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       Nil,
       None,
       List(classBiz),
-      ConcreteClass
+      false
     )
 
-    val classBaz = Class("Baz",
+    val classBaz = ActualClass("Baz",
       Nil,
       Nil,
       List(Public),
       Nil,
       Some(classFoo),
       Nil,
-      ConcreteClass
+      false
     )
 
     classes shouldContain classBiz

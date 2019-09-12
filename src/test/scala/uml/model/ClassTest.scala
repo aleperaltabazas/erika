@@ -1,15 +1,14 @@
 package uml.model
 
 import org.scalatest.{FlatSpec, Matchers}
-import uml.model.ClassTypes.{AbstractClass, ConcreteClass, Enum, Interface}
 import uml.model.Modifiers.{Private, Public}
 import uml.model.types.Type
 
 case class ClassTest() extends FlatSpec with Matchers {
-  val foo = Class("Foo", Nil, Nil, Nil, Nil, None, Nil, ConcreteClass)
-  val bar = Class("Bar", Nil, Nil, Nil, Nil, None, Nil, Interface)
-  val baz = Class("Baz", Nil, Nil, Nil, Nil, None, Nil, AbstractClass)
-  val biz = Class("Biz", Nil, Nil, Nil, Nil, None, Nil, Enum)
+  val foo = ActualClass("Foo", Nil, Nil, Nil, Nil, None, Nil, false)
+  val bar = Interface("Bar", Nil, Nil, Nil, None)
+  val baz = ActualClass("Baz", Nil, Nil, Nil, Nil, None, Nil, true)
+  val biz = Enum("Biz", Nil, Nil, Nil, Nil, Nil)
 
   "write" should "work with empty components list" in {
     foo.write shouldBe "class Foo {\n\n\n}"
@@ -19,7 +18,7 @@ case class ClassTest() extends FlatSpec with Matchers {
   }
 
   "writeRelations" should "work" in {
-    val qux = Class("Qux", List(
+    val qux = ActualClass("Qux", List(
       Attribute("foo", Type of "Foo", List(Private), Nil),
       Attribute("bar", Type of "Bar", List(Private), Nil),
       Attribute("baz", Type of "List<Baz>", List(Private), Nil),
@@ -32,7 +31,7 @@ case class ClassTest() extends FlatSpec with Matchers {
       Nil,
       None,
       Nil,
-      ConcreteClass)
+      false)
 
     foo.writeRelations shouldBe ""
     qux.writeRelations shouldBe "Qux --> Foo\nQux --> Bar\nQux --> \"*\" Baz"

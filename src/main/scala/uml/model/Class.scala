@@ -1,12 +1,23 @@
 package uml.model
 
-import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
 import uml.model.types.{GenericType, SimpleType}
 
-case class Class(name: String, attributes: List[Attribute], methods: List[Method], modifiers: List[Modifier],
-                 annotations: List[String], parent: Option[Class], interfaces: List[Class], classType: ClassType)
-  extends Modifiable {
+trait Class extends Modifiable {
+
+  def name: String
+
+  def attributes: List[Attribute]
+
+  def methods: List[Method]
+
+  def modifiers: List[Modifier]
+
+  def annotations: List[String]
+
+  def parent: Option[Class]
+
+  def interfaces: List[Class]
 
   private def isInherited(attribute: Attribute): Boolean = parent.exists(p => p.attributes.exists(_.name == attribute.name))
 
@@ -21,7 +32,7 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
       .map(m => m.write)
       .mkString("\n")
 
-    val definition = s"${classType.write} $name"
+    val definition = s"${this.definition}"
 
     val inheritance = parent match {
       case Some(p) => s" extends ${p.name}"
@@ -48,6 +59,8 @@ case class Class(name: String, attributes: List[Attribute], methods: List[Method
           }
       }.mkString("\n")
   }
+
+  protected def definition: String
 
   private def hasGetterFor(attribute: Attribute): Boolean = methods.exists(_.name == s"get${attribute.name.capitalize}")
 

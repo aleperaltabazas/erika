@@ -3,7 +3,7 @@ package uml.builder
 import uml.exception.BuildError
 import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
-import uml.model.{Attribute, Class, Method}
+import uml.model.{ActualClass, Attribute, Class, ClassTypes, Enum, Interface, Method}
 import uml.repository.{ClassBuilderRepository, ClassRepository}
 
 case class ClassBuilder(name: String,
@@ -29,7 +29,16 @@ case class ClassBuilder(name: String,
       throw BuildError(s"Error creating interfaces, expected $interfaces, built ${builtInterfaces.map(_.name)}")
     }
 
-    classes.add(Class(name, attributes, methods, effectiveModifiers, annotations, builtSuper, builtInterfaces, classType))
+    val self = classType match {
+      case ClassTypes.Enum => Enum(name, attributes, methods, effectiveModifiers, annotations, builtInterfaces)
+      case ClassTypes.Interface => Interface(name, methods, effectiveModifiers, annotations, builtSuper)
+      case ClassTypes.AbstractClass => ActualClass(name, attributes, methods, effectiveModifiers, annotations,
+        builtSuper, builtInterfaces, isAbstract = true)
+      case ClassTypes.ConcreteClass => ActualClass(name, attributes, methods, effectiveModifiers, annotations,
+        builtSuper, builtInterfaces, isAbstract = false)
+    }
+
+    classes.add(self)
     builders.removeIf(_ == this)
   }
 }

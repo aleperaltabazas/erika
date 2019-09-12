@@ -1,12 +1,11 @@
 package uml
 
-import uml.model.ClassTypes.{AbstractClass, ConcreteClass}
 import uml.model.Modifiers.{Abstract, Private, Public}
 import uml.model.types.SimpleType
-import uml.model.{Argument, Attribute, Class, Method}
+import uml.model.{ActualClass, Argument, Attribute, Method}
 
 package object io {
-  val characterClass: Class = Class("Character", List(
+  val characterClass: ActualClass = ActualClass("Character", List(
     Attribute("id", SimpleType("Long"), List(Private), List("@Id", "@GeneratedValue")),
     Attribute("maxHp", SimpleType("Double"), List(Private), Nil),
     Attribute("currentHp", SimpleType("Double"), List(Private), Nil),
@@ -28,9 +27,9 @@ package object io {
   ), List("@Entity"),
     None,
     Nil,
-    ConcreteClass)
+    false)
 
-  val characterStateClass = Class("CharacterState", List(
+  val characterStateClass = ActualClass("CharacterState", List(
     Attribute("id", SimpleType("Long"), List(Private), List("@Id", "@GeneratedValue"))
   ), List(
     Method("call", SimpleType("CharacterState"), List(Argument("character", SimpleType("Character"))), List(Public,
@@ -40,21 +39,21 @@ package object io {
   ), List("@Entity", "@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)"),
     None,
     Nil,
-    AbstractClass)
+    true)
 
-  val aliveClass = Class("Alive", Nil, List(
+  val aliveClass = ActualClass("Alive", Nil, List(
     Method("call", SimpleType("CharacterState"), List(Argument("character", SimpleType("Character"))), List(Public), Nil)
   ), List(Public),
     List("@Entity"),
     Some(characterStateClass),
     Nil,
-    ConcreteClass)
+    false)
 
-  val knockedOutClass = Class("KnockedOut", Nil, List(
+  val knockedOutClass = ActualClass("KnockedOut", Nil, List(
     Method("call", SimpleType("CharacterState"), List(Argument("character", SimpleType("Character"))), List(Public), Nil)
   ), List(Public),
     List("@Entity"),
     Some(characterStateClass),
     Nil,
-    ConcreteClass)
+    false)
 }

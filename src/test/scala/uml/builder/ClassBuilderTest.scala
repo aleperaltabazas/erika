@@ -2,18 +2,18 @@ package uml.builder
 
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import test.utils.Implicits._
-import uml.model.Class
-import uml.model.ClassTypes._
 import uml.model.Modifiers.PackagePrivate
+import uml.model.{ActualClass, ClassTypes, Interface, Class}
 import uml.repository._
 
 case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter {
-  val classBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ConcreteClass, None)
-  val interfaceBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, Interface, None)
-  val abstractClassBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, AbstractClass, None)
-  val clazz: Class = Class("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, ConcreteClass)
-  val interface: Class = Class("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, Interface)
-  val abstractClass: Class = Class("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, AbstractClass)
+  val classBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.ConcreteClass, None)
+  val interfaceBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.Interface, None)
+  val abstractClassBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.AbstractClass, None)
+
+  val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, false)
+  val interface: Interface = Interface("", Nil, List(PackagePrivate), Nil, None)
+  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, true)
   var classRepository: ClassRepository = new ClassRepository()
   var builderRepository: ClassBuilderRepository = new ClassBuilderRepository()
 
@@ -31,7 +31,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     classRepository shouldBeSize 1
     builderRepository shouldBeSize 0
 
-    val expectedClass: Class = clazz.copy(name = "Foo")
+    val expectedClass: ActualClass = clazz.copy(name = "Foo")
 
     classRepository shouldContain expectedClass
   }
@@ -45,8 +45,8 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     classRepository shouldBeSize 2
     builderRepository shouldBeSize 0
 
-    val expectedSuper: Class = clazz.copy(name = "Bar")
-    val expectedChild: Class = clazz.copy(name = "Foo", parent = Some(expectedSuper))
+    val expectedSuper: ActualClass = clazz.copy(name = "Bar")
+    val expectedChild: ActualClass = clazz.copy(name = "Foo", parent = Some(expectedSuper))
 
     classRepository shouldContain expectedChild
     classRepository shouldContain expectedSuper
@@ -54,7 +54,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
 
   "build" should "work with interfaces" in {
     val biz: ClassBuilder = interfaceBuilder.copy(name = "Biz")
-    val baz: Class = interface.copy(name = "Baz")
+    val baz: Interface = interface.copy(name = "Baz")
 
     val foo: ClassBuilder = classBuilder.copy(name = "Foo", interfaces = List("Biz", "Baz"))
 
@@ -66,7 +66,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     classRepository shouldBeSize 3
     builderRepository shouldBeSize 0
 
-    val expectedBiz: Class = interface.copy(name = "Biz")
+    val expectedBiz: Interface = interface.copy(name = "Biz")
     val expectedFoo: Class = clazz.copy(name = "Foo", interfaces = List[Class](expectedBiz, baz))
 
     classRepository shouldContain expectedFoo
