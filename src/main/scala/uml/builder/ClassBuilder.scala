@@ -13,7 +13,8 @@ case class ClassBuilder(name: String,
                         annotations: List[String],
                         interfaces: List[String],
                         classType: ClassType,
-                        declaredSuper: Option[String]) extends Builder {
+                        declaredSuper: Option[String],
+                        enumClauses: List[String]) extends Builder {
 
   def build(classes: ClassRepository, builders: ClassBuilderRepository): Unit = {
     declaredSuper.flatMap(parent => builders.find(_.name == parent)).foreach(_.build(classes, builders))
@@ -30,7 +31,7 @@ case class ClassBuilder(name: String,
     }
 
     val self = classType match {
-      case ClassTypes.Enum => Enum(name, attributes, methods, effectiveModifiers, annotations, builtInterfaces)
+      case ClassTypes.Enum => Enum(name, attributes, methods, effectiveModifiers, annotations, builtInterfaces, enumClauses)
       case ClassTypes.Interface => Interface(name, methods, effectiveModifiers, annotations, builtSuper)
       case ClassTypes.AbstractClass => ActualClass(name, attributes, methods, effectiveModifiers, annotations,
         builtSuper, builtInterfaces, isAbstract = true)

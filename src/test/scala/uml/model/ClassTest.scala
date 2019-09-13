@@ -8,7 +8,7 @@ case class ClassTest() extends FlatSpec with Matchers {
   val foo = ActualClass("Foo", Nil, Nil, Nil, Nil, None, Nil, false)
   val bar = Interface("Bar", Nil, Nil, Nil, None)
   val baz = ActualClass("Baz", Nil, Nil, Nil, Nil, None, Nil, true)
-  val biz = Enum("Biz", Nil, Nil, Nil, Nil, Nil)
+  val biz = Enum("Biz", Nil, Nil, Nil, Nil, Nil, Nil)
 
   "write" should "work with empty components list" in {
     foo.write shouldBe "class Foo {\n\n\n}"

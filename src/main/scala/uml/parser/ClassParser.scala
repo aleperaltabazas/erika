@@ -26,6 +26,10 @@ case object ClassParser {
     classRepository.getAll
   }
 
+  def parseEnumClauses(body: List[String]): List[String] = body
+    .takeWhile(line => line.matches(",?\\w+([,;])?"))
+    .map(line => line.removeByRegex("}|;|,|").trim)
+
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
     val lines: List[String] = effectiveText.splitBy("\n|\t")
@@ -36,13 +40,17 @@ case object ClassParser {
     val classType: ClassType = parseType(className, definitionWords)
     val annotations: List[String] = parseAnnotations(text).map(_.trim)
     val body: List[String] = parseBody(className, text)
+    val enumClauses = classType match {
+      case ClassTypes.Enum => parseEnumClauses(body)
+      case _ => Nil
+    }
     val attributes: List[Attribute] = AttributeParser.parse(body)
     val methods: List[Method] = MethodParser.parse(body)
     val parent: Option[String] = parseSuper(className, definitionWords)
     val modifiers: List[Modifier] = parseModifiers(classType, definitionWords)
     val interfaces: List[String] = parseInterfaces(className, definitionWords)
 
-    ClassBuilder(className, attributes, methods, modifiers, annotations, interfaces, classType, parent)
+    ClassBuilder(className, attributes, methods, modifiers, annotations, interfaces, classType, parent, enumClauses)
   }
 
   def parseBody(className: String, text: String): List[String] = {

@@ -100,6 +100,13 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ("\\s").toList)
   }
 
+  "parseEnumClauses" should "work" in {
+    ClassParser.parseEnumClauses("SOME,\nENUM,\nCONSTANTS".split("\n").toList) shouldBe
+      List("SOME", "ENUM", "CONSTANTS")
+    ClassParser.parseEnumClauses("SOME,\nENUM,\nCONSTANTS;\npublic void withBehaviour() {\n;\n}"
+      .split("\n").toList) shouldBe List("SOME", "ENUM", "CONSTANTS")
+  }
+
   "parseIntoBuilder" should "work" in {
     ClassParser.parseIntoBuilder(classText) shouldBe ClassBuilder("Foo",
       List(Attribute("foo", Type of "int", List(Private), List()),
@@ -110,7 +117,8 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       List(),
       List(),
       ClassTypes.ConcreteClass,
-      None
+      None,
+      Nil
     )
 
     ClassParser.parseIntoBuilder(interfaceText) shouldBe ClassBuilder("Foo",
@@ -121,7 +129,8 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       Nil,
       Nil,
       ClassTypes.Interface,
-      None
+      None,
+      Nil
     )
   }
 

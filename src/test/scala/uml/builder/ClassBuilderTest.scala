@@ -3,13 +3,13 @@ package uml.builder
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import test.utils.Implicits._
 import uml.model.Modifiers.PackagePrivate
-import uml.model.{ActualClass, ClassTypes, Interface, Class}
+import uml.model.{ActualClass, Class, ClassTypes, Interface}
 import uml.repository._
 
 case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter {
-  val classBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.ConcreteClass, None)
-  val interfaceBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.Interface, None)
-  val abstractClassBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.AbstractClass, None)
+  val classBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.ConcreteClass, None, Nil)
+  val interfaceBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.Interface, None, Nil)
+  val abstractClassBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.AbstractClass, None, Nil)
 
   val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, false)
   val interface: Interface = Interface("", Nil, List(PackagePrivate), Nil, None)
