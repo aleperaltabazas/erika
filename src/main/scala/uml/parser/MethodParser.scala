@@ -4,8 +4,9 @@ import uml.builder.MethodBuilder
 import uml.constants.Regex
 import uml.exception.{ArgumentParseError, MethodParseError}
 import uml.model.Modifiers.Modifier
+import uml.model.methods
+import uml.model.methods.{Argument, Method}
 import uml.model.types.Type
-import uml.model.{Argument, Method}
 import uml.parser.ParseHelpers.{AccumulateAnnotationsUntil, GenericReplacement, ParseAnnotations, ParseModifiers, ParseTypeAndName}
 import uml.utils.Implicits.RichString
 
@@ -41,7 +42,7 @@ case object MethodParser {
           arg <- mappedString
         } yield {
           arg.splitBy("\\s") match {
-            case _ :+ _type :+ name if !name.isEmpty && !_type.isEmpty => Argument(name, Type(_type))
+            case _ :+ _type :+ name if !name.isEmpty && !_type.isEmpty => methods.Argument(name, Type(_type))
             case _ => throw ArgumentParseError(s"Error parsing argument $arg")
           }
         }

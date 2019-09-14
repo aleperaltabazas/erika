@@ -3,8 +3,8 @@ package uml.parser
 import uml.builder.AttributeBuilder
 import uml.constants.Regex
 import uml.exception.AttributeParseError
-import uml.model.Attribute
 import uml.model.Modifiers.Modifier
+import uml.model.attributes.Attribute
 import uml.parser.ParseHelpers._
 import uml.utils.Implicits._
 

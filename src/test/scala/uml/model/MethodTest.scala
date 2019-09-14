@@ -1,13 +1,14 @@
 package uml.model
 
 import org.scalatest.{FlatSpec, Matchers}
+import uml.model.methods.{Argument, Method}
 import uml.model.types.Type
 
 case class MethodTest() extends FlatSpec with Matchers {
   val foo = Method("foo", Type of "int", Nil, Nil, Nil)
-  val baz = Method("baz", Type of "void", List(Argument("a", Type of "String")), Nil, Nil)
-  val biz = Method("biz", Type of "List<String>", List(Argument("a", Type of "List<String>"), Argument("b", Type of
-    "Foo"), Argument("c", Type of "Bar")), Nil, Nil)
+  val baz = methods.Method("baz", Type of "void", List(Argument("a", Type of "String")), Nil, Nil)
+  val biz = methods.Method("biz", Type of "List<String>", List(methods.Argument("a", Type of "List<String>"), methods.Argument("b", Type of
+    "Foo"), methods.Argument("c", Type of "Bar")), Nil, Nil)
 
   "write" should "work" in {
     foo.write shouldBe "foo(): Int"

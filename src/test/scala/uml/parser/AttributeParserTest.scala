@@ -1,8 +1,9 @@
 package uml.parser
 
 import org.scalatest.{FlatSpec, Matchers}
+import uml.model.attributes.Attribute
 import uml.model.types.Type
-import uml.model.{Attribute, Modifiers}
+import uml.model.{Modifiers, attributes}
 
 class AttributeParserTest extends FlatSpec with Matchers {
   "parse" should "work" in {
@@ -10,7 +11,7 @@ class AttributeParserTest extends FlatSpec with Matchers {
       "int", List(Modifiers.Private), List[String]()))
     AttributeParser.parse(List("private int foo;", "private int bar;", "public void " +
       "doSomething()", "public void getFoo()")) shouldBe List(
-      Attribute("foo", Type of "int", List(Modifiers.Private), List()),
-      Attribute("bar", Type of "int", List(Modifiers.Private), List()))
+      attributes.Attribute("foo", Type of "int", List(Modifiers.Private), List()),
+      attributes.Attribute("bar", Type of "int", List(Modifiers.Private), List()))
   }
 }

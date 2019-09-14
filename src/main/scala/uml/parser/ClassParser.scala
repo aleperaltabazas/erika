@@ -3,9 +3,11 @@ package uml.parser
 import uml.builder.ClassBuilder
 import uml.constants.Regex
 import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
-import uml.model.ClassTypes.ClassType
 import uml.model.Modifiers.Modifier
-import uml.model.{Attribute, Class, ClassTypes, Method}
+import uml.model.attributes.Attribute
+import uml.model.classes.ClassTypes.ClassType
+import uml.model.classes.{Class, ClassTypes}
+import uml.model.methods.Method
 import uml.parser.ParseHelpers.{AnnotationTrim, GenericReplacement}
 import uml.parser.Parsers.CharParser
 import uml.repository.{ClassBuilderRepository, ClassRepository}

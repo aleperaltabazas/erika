@@ -3,7 +3,7 @@ package uml.io
 import java.io.{ByteArrayOutputStream, FileOutputStream}
 
 import net.sourceforge.plantuml.{FileFormat, FileFormatOption, SourceStringReader}
-import uml.model.Class
+import uml.model.classes.Class
 
 case object Writer {
   def classDiagram(classes: List[Class]): String = {

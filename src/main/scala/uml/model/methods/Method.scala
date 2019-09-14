@@ -1,6 +1,8 @@
-package uml.model
+package uml.model.methods
 
+import uml.model.Modifiable
 import uml.model.Modifiers.Modifier
+import uml.model.classes.{ActualClass, Class}
 import uml.model.types.Type
 
 case class Method(name: String, returnType: Type, arguments: List[Argument], modifiers: List[Modifier],

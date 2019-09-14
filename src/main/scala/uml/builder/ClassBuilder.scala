@@ -1,9 +1,12 @@
 package uml.builder
 
 import uml.exception.BuildError
-import uml.model.ClassTypes.ClassType
+import uml.model
 import uml.model.Modifiers.Modifier
-import uml.model.{ActualClass, Attribute, Class, ClassTypes, Enum, Interface, Method}
+import uml.model.attributes.Attribute
+import uml.model.classes.ClassTypes.ClassType
+import uml.model.classes.{ActualClass, ClassTypes, Enum, Interface}
+import uml.model.methods.Method
 import uml.repository.{ClassBuilderRepository, ClassRepository}
 
 case class ClassBuilder(name: String,
@@ -20,11 +23,11 @@ case class ClassBuilder(name: String,
     declaredSuper.flatMap(parent => builders.find(_.name == parent)).foreach(_.build(classes, builders))
     builders.findAll(builder => interfaces.contains(builder.name)).foreach(_.build(classes, builders))
 
-    val builtSuper: Option[Class] = declaredSuper.map(parent => classes.find(_.name == parent).getOrElse {
+    val builtSuper: Option[model.classes.Class] = declaredSuper.map(parent => classes.find(_.name == parent).getOrElse {
       throw BuildError(s"Error building class $name: parent $parent not built")
     })
 
-    val builtInterfaces: List[Class] = classes.findAll(c => interfaces.contains(c.name))
+    val builtInterfaces: List[model.classes.Class] = classes.findAll(c => interfaces.contains(c.name))
 
     if (builtInterfaces.length != interfaces.length) {
       throw BuildError(s"Error creating interfaces, expected $interfaces, built ${builtInterfaces.map(_.name)}")

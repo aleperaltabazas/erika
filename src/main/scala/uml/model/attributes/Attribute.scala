@@ -1,5 +1,6 @@
-package uml.model
+package uml.model.attributes
 
+import uml.model.Modifiable
 import uml.model.Modifiers.Modifier
 import uml.model.types.{StandardTypes, Type}
 

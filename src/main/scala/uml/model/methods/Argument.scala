@@ -1,4 +1,4 @@
-package uml.model
+package uml.model.methods
 
 import uml.model.types.Type
 

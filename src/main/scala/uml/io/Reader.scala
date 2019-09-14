@@ -1,6 +1,6 @@
 package uml.io
 
-import uml.model.Class
+import uml.model.classes.Class
 import uml.parser.ClassParser
 import uml.utils.Functions.ReadFilesRecursively
 

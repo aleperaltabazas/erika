@@ -3,7 +3,8 @@ package uml.builder
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import test.utils.Implicits._
 import uml.model.Modifiers.PackagePrivate
-import uml.model.{ActualClass, Class, ClassTypes, Interface}
+import uml.model.classes
+import uml.model.classes.{ActualClass, ClassTypes, Interface}
 import uml.repository._
 
 case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter {
@@ -67,7 +68,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     builderRepository shouldBeSize 0
 
     val expectedBiz: Interface = interface.copy(name = "Biz")
-    val expectedFoo: Class = clazz.copy(name = "Foo", interfaces = List[Class](expectedBiz, baz))
+    val expectedFoo: classes.Class = clazz.copy(name = "Foo", interfaces = List[classes.Class](expectedBiz, baz))
 
     classRepository shouldContain expectedFoo
     classRepository shouldContain expectedBiz

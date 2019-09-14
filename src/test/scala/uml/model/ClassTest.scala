@@ -2,6 +2,9 @@ package uml.model
 
 import org.scalatest.{FlatSpec, Matchers}
 import uml.model.Modifiers.{Private, Public}
+import uml.model.attributes.Attribute
+import uml.model.classes.{ActualClass, Enum, Interface}
+import uml.model.methods.Method
 import uml.model.types.Type
 
 case class ClassTest() extends FlatSpec with Matchers {
@@ -20,13 +23,13 @@ case class ClassTest() extends FlatSpec with Matchers {
   "writeRelations" should "work" in {
     val qux = ActualClass("Qux", List(
       Attribute("foo", Type of "Foo", List(Private), Nil),
-      Attribute("bar", Type of "Bar", List(Private), Nil),
-      Attribute("baz", Type of "List<Baz>", List(Private), Nil),
-      Attribute("some", Type of "Int", List(Private), Nil)
+      attributes.Attribute("bar", Type of "Bar", List(Private), Nil),
+      attributes.Attribute("baz", Type of "List<Baz>", List(Private), Nil),
+      attributes.Attribute("some", Type of "Int", List(Private), Nil)
     ), List(
       Method("getFoo", Type of "Foo", Nil, List(Public), Nil),
-      Method("getSome", Type of "Int", Nil, List(Public), Nil),
-      Method("getBaz", Type of "List<Baz>", Nil, List(Public), Nil)
+      methods.Method("getSome", Type of "Int", Nil, List(Public), Nil),
+      methods.Method("getBaz", Type of "List<Baz>", Nil, List(Public), Nil)
     ), List(Public),
       Nil,
       None,

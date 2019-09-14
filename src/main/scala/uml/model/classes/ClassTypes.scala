@@ -1,4 +1,4 @@
-package uml.model
+package uml.model.classes
 
 case object ClassTypes {
 

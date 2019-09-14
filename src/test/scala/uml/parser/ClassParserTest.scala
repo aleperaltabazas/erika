@@ -5,8 +5,11 @@ import test.utils.Implicits._
 import uml.builder.ClassBuilder
 import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
 import uml.model.Modifiers._
+import uml.model.attributes.Attribute
+import uml.model.classes.{ActualClass, Class, ClassTypes, Enum, Interface}
+import uml.model.methods.Method
 import uml.model.types.Type
-import uml.model.{ActualClass, Attribute, Class, ClassTypes, Enum, Interface, Method}
+import uml.model.{attributes, methods}
 
 case class ClassParserTest() extends FlatSpec with Matchers {
   val classText: String = "public class Foo {\nprivate int foo;\nprivate int bar;\n public void doSomething() {\n " +
@@ -117,9 +120,9 @@ case class ClassParserTest() extends FlatSpec with Matchers {
   "parseIntoBuilder" should "work" in {
     ClassParser.parseIntoBuilder(classText) shouldBe ClassBuilder("Foo",
       List(Attribute("foo", Type of "int", List(Private), List()),
-        Attribute("bar", Type of "int", List(Private), List())),
+        attributes.Attribute("bar", Type of "int", List(Private), List())),
       List(Method("doSomething", Type of "void", List(), List(Public), List()),
-        Method("getFoo", Type of "int", List(), List(Public), List())),
+        methods.Method("getFoo", Type of "int", List(), List(Public), List())),
       List(Public),
       List(),
       List(),
@@ -130,8 +133,8 @@ case class ClassParserTest() extends FlatSpec with Matchers {
 
     ClassParser.parseIntoBuilder(interfaceText) shouldBe ClassBuilder("Foo",
       Nil,
-      List(Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil),
-        Method("getSomething", Type of "int", Nil, List(PackagePrivate), Nil)),
+      List(methods.Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil),
+        methods.Method("getSomething", Type of "int", Nil, List(PackagePrivate), Nil)),
       List(Public),
       Nil,
       Nil,
@@ -151,17 +154,17 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     val classes: List[Class] = ClassParser.parse(List(foo, baz, biz, bar))
 
     val classBiz = Interface("Biz",
-      List(Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil)),
+      List(methods.Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil)),
       List(Public),
       Nil,
       None
     )
 
     val classFoo = ActualClass("Foo",
-      List(Attribute("attr", Type of "int", List(Private), Nil),
-        Attribute("bbb", Type of "String", List(Private), Nil)),
-      List(Method("getAttr", Type of "int", Nil, List(Public), Nil),
-        Method("doSomething", Type of "void", Nil, List(Public), Nil)),
+      List(attributes.Attribute("attr", Type of "int", List(Private), Nil),
+        attributes.Attribute("bbb", Type of "String", List(Private), Nil)),
+      List(methods.Method("getAttr", Type of "int", Nil, List(Public), Nil),
+        methods.Method("doSomething", Type of "void", Nil, List(Public), Nil)),
       List(Public),
       Nil,
       None,
