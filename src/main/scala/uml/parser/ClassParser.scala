@@ -26,9 +26,10 @@ case object ClassParser {
     classRepository.getAll
   }
 
-  def parseEnumClauses(body: List[String]): List[String] = body
-    .takeWhile(line => line.matches(",?\\w+([,;])?"))
-    .map(line => line.removeByRegex("}|;|,|").trim)
+  def parseEnumClauses(body: List[String]): List[String] = simplifyMethods(body)
+    .takeWhile(line => line.matches("\\w+ ?([(].*[)])? ?(,|;|[{])?"))
+    .map(line => line.takeWhile(char => char != '(' || char != '{'
+      || char != ',' || char != ';').removeByRegex("}|;|,|").trim)
 
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
@@ -56,7 +57,7 @@ case object ClassParser {
   def parseBody(className: String, text: String): List[String] = {
     val innerBody = ('{' << text >> '}').splitBy("\\n").filter(line => !line.isEmpty)
 
-    simplifyMethods.andThen(filterConstructor(className))(innerBody)
+    (simplifyMethods andThen filterConstructor(className)) (innerBody)
   }
 
   private def simplifyMethods: List[String] => List[String] = lines => {

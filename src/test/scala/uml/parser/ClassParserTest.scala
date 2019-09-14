@@ -6,7 +6,7 @@ import uml.builder.ClassBuilder
 import uml.exception.{IllegalExtensionError, NoClassDefinitionError, NoSuchTypeException}
 import uml.model.Modifiers._
 import uml.model.types.Type
-import uml.model.{ActualClass, Attribute, Class, ClassTypes, Interface, Method}
+import uml.model.{ActualClass, Attribute, Class, ClassTypes, Enum, Interface, Method}
 
 case class ClassParserTest() extends FlatSpec with Matchers {
   val classText: String = "public class Foo {\nprivate int foo;\nprivate int bar;\n public void doSomething() {\n " +
@@ -137,10 +137,11 @@ case class ClassParserTest() extends FlatSpec with Matchers {
   "parse" should "work" in {
     val foo = "public class Foo implements Biz{\nprivate int attr;\nprivate String bbb;\npublic int getAttr() " +
       "{\nreturn attr;\n}\npublic void doSomething() {\n}\n}"
+    var bar = "public enum Bar {\nFOO,\nBAR,\nBAZ,\n}"
     val baz = "public class Baz extends Foo {\n}"
     val biz = "public interface Biz {\nvoid doSomething();\n}"
 
-    val classes: List[Class] = ClassParser.parse(List(foo, baz, biz))
+    val classes: List[Class] = ClassParser.parse(List(foo, baz, biz, bar))
 
     val classBiz = Interface("Biz",
       List(Method("doSomething", Type of "void", Nil, List(PackagePrivate), Nil)),
@@ -170,9 +171,11 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       Nil,
       false
     )
+    val classBar = Enum("Bar", Nil, Nil, List(Public), Nil, Nil, List("FOO", "BAR", "BAZ"))
 
     classes shouldContain classBiz
     classes shouldContain classBaz
     classes shouldContain classFoo
+    classes shouldContain classBar
   }
 }
