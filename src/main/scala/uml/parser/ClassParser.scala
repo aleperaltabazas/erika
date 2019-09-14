@@ -27,9 +27,12 @@ case object ClassParser {
   }
 
   def parseEnumClauses(body: List[String]): List[String] = simplifyMethods(body)
-    .takeWhile(line => line.matches("\\w+ ?([(].*[)])? ?(,|;|[{])?"))
-    .map(line => line.takeWhile(char => char != '(' || char != '{'
-      || char != ',' || char != ';').removeByRegex("}|;|,|").trim)
+    .flatMap(line => line.split(",|;").toList)
+    .takeWhile(line => {
+      line.matches(s"${Regex.ENUM_CONSTANT} ?")
+    })
+    .map(line => line.takeWhile(char => char != '(' && char != '{'
+      && char != ',' && char != ';').removeByRegex("}|;|,|").trim)
 
   def parseIntoBuilder(text: String): ClassBuilder = {
     val effectiveText: String = (filterImports andThen filterPackages) (text)
@@ -58,13 +61,15 @@ case object ClassParser {
     val innerBody = ('{' << text >> '}').splitBy("\\n").filter(line => !line.isEmpty)
 
     (simplifyMethods andThen filterConstructor(className)) (innerBody)
+      .map(line => line.removeByRegex(";").trim)
   }
 
   private def simplifyMethods: List[String] => List[String] = lines => {
     lines.mkString("\n").replaceAll("[{]\n", "{")
       .replaceAll("\n[}]", "}")
       .splitBy("\n")
-      .map(line => ('{' >> line << '}').removeByRegex("([{]|[}]|;)*").trim)
+      .map(line => ('{' >> line << '}').replaceAll("[{][}]", ";")
+        .removeByRegex("([{]|[}])*").trim)
   }
 
   private def filterConstructor: String => List[String] => List[String] = className => lines =>

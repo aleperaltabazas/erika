@@ -105,6 +105,10 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       List("SOME", "ENUM", "CONSTANTS")
     ClassParser.parseEnumClauses("SOME,\nENUM,\nCONSTANTS;\npublic void withBehaviour() {\n;\n}"
       .split("\n").toList) shouldBe List("SOME", "ENUM", "CONSTANTS")
+    ClassParser.parseEnumClauses("SOME(2),\nENUM(3),\nWITH_CONSTRUCTORS(3)\n".split("\n").toList) shouldBe
+      List("SOME", "ENUM", "WITH_CONSTRUCTORS")
+    ClassParser.parseEnumClauses("ENUM,CONSTANTS,IN,SAME,LINE".split("\n").toList) shouldBe
+      List("ENUM", "CONSTANTS", "IN", "SAME", "LINE")
   }
 
   "parseIntoBuilder" should "work" in {

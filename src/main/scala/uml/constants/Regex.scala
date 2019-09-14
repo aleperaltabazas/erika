@@ -15,8 +15,9 @@ case object Regex {
   val INTERFACE: String = s"($ANNOTATION)*($VISIBILITY)?interface [A-Z]\\w*( $INHERITANCE)?"
   val ENUM: String = s"($ANNOTATION)*($VISIBILITY)?enum [A-Z]\\w*"
   val CLASS_DEFINITION: String = s"(.* )?(class|interface|enum) [A-Z]\\w*( $INHERITANCE)?( $IMPLEMENTATION)? ?[{]?"
-  val CONSTRUCTOR: String => String = className => s"($ANNOTATION)*($VISIBILITY)?$className[(].*[)] ?[{]?"
+  val CONSTRUCTOR: String => String = className => s"($ANNOTATION)*($VISIBILITY)?$className[(].*[)] ?;?"
   val TYPE: String = s"\\w+($GENERIC)?"
   val ATTRIBUTE: String = s"($ANNOTATION)*($VISIBILITY)($MODIFIERS)*$TYPE \\w+($INITIALIZATION|;?)"
   val METHOD: String = s"($ANNOTATION)*($VISIBILITY)?($MODIFIERS)*$TYPE \\w+[(].*[)](;| ?[{]?)"
+  val ENUM_CONSTANT: String = "\\w+ ?([(].*[)])?"
 }
