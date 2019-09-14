@@ -28,6 +28,8 @@ case object ClassParser {
 
   def parseEnumClauses(body: List[String]): List[String] = simplifyMethods(body)
     .flatMap(line => line.split(",|;").toList)
+    .map(_.trim)
+    .filter(line => !line.isEmpty)
     .takeWhile(line => {
       line.matches(s"${Regex.ENUM_CONSTANT} ?")
     })
