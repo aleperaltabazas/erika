@@ -1,4 +1,4 @@
-name := "uml-scala"
+name := "erika"
 
 version := "1.0"
 
