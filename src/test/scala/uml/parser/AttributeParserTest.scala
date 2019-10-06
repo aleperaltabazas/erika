@@ -3,7 +3,7 @@ package uml.parser
 import org.scalatest.{FlatSpec, Matchers}
 import uml.model.Modifiers.{Final, Private, Static}
 import uml.model.attributes.Attribute
-import uml.model.types.{SimpleType, Type}
+import uml.model.types.{GenericType, SimpleType, Type}
 import uml.model.{Modifiers, attributes}
 
 class AttributeParserTest extends FlatSpec with Matchers {
@@ -23,5 +23,10 @@ class AttributeParserTest extends FlatSpec with Matchers {
       SimpleType("String"), List(Private, Static, Final), Nil)
     AttributeParser.parseAttribute("@Autowired\n@Qualifier(\"foo\")\nprivate Foo foo;") shouldBe
       Attribute("foo", SimpleType("Foo"), List(Private), List("@Autowired", "@Qualifier(\"foo\")"))
+    AttributeParser.parseAttribute("private List<Integer> foo;") shouldBe
+      Attribute("foo", GenericType("List", List(SimpleType("Int"))), List(Private), Nil)
+    AttributeParser.parseAttribute("private Map<String, List<Integer>> foo;") shouldBe
+      Attribute("foo", GenericType("Map", List(SimpleType("String"), GenericType("List", List(SimpleType("Int"))))),
+        List(Private), Nil)
   }
 }

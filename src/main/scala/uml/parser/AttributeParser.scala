@@ -6,6 +6,7 @@ import uml.exception.AttributeParseError
 import uml.model.Modifiers
 import uml.model.Modifiers.Modifier
 import uml.model.attributes.Attribute
+import uml.model.types.{GenericType, Type}
 import uml.parser.ParseHelpers._
 import uml.utils.Implicits._
 
@@ -18,8 +19,10 @@ case object AttributeParser extends RegexParsers {
   }
 
   def parseAttribute(attribute: String): Attribute = {
-    this.parse(defineParser, attribute).getOrElse {
-      throw AttributeParseError(s"Error parsing $attribute")
+    this.parse(defineParser, attribute) match {
+      case Success(result, _) => result
+      case Failure(msg, _) => throw AttributeParseError(msg)
+      case Error(msg, _) => throw AttributeParseError(msg)
     }
   }
 
@@ -37,7 +40,22 @@ case object AttributeParser extends RegexParsers {
       case s: String => throw AttributeParseError(s"No such annotation $s")
     }
 
-    def typing: Parser[String] = "\\w+".r ^^ identity
+    def simpleType: Parser[Type] = "\\w+".r ^^ {
+      Type(_)
+    }
+
+    def root: Parser[Type] = genericType | ("\\w+".r ^^ {
+      Type(_)
+    })
+
+    def genericType: Parser[Type] = "\\w+".r ~ ("<" ~> repsep(root, ",") <~ ">") ^^ {
+      result =>
+        val genericWrapper = result._1
+        val genericImplementation = result._2
+        GenericType(genericWrapper, genericImplementation)
+    }
+
+    def typing = genericType | simpleType
 
     def naming: Parser[String] = "\\w+".r ^^ identity
 
@@ -61,7 +79,7 @@ case object AttributeParser extends RegexParsers {
     val annotations: List[String] = ParseAnnotations(words)
     val (name, attributeType): (String, String) = ParseTypeAndName(words, modifiers, annotations)(AttributeParseError)
 
-    AttributeBuilder(name, attributeType, modifiers, annotations)
+    AttributeBuilder(name, Type of attributeType, modifiers, annotations)
   }
 
   private def removeInitialization(line: String): String = {
