@@ -3,14 +3,54 @@ package uml.parser
 import uml.builder.AttributeBuilder
 import uml.constants.Regex
 import uml.exception.AttributeParseError
+import uml.model.Modifiers
 import uml.model.Modifiers.Modifier
 import uml.model.attributes.Attribute
 import uml.parser.ParseHelpers._
 import uml.utils.Implicits._
 
-case object AttributeParser {
-  def parse(body: List[String]): List[Attribute] = {
+import scala.util.parsing.combinator._
+
+
+case object AttributeParser extends RegexParsers {
+  def parseAttributes(body: List[String]): List[Attribute] = {
     AccumulateAnnotationsUntil(Regex.ATTRIBUTE)(body, Regex.METHOD).map(parseIntoBuilder).map(_.build)
+  }
+
+  def parseAttribute(attribute: String): Attribute = {
+    this.parse(defineParser, attribute).getOrElse {
+      throw AttributeParseError(s"Error parsing $attribute")
+    }
+  }
+
+  private def defineParser: Parser[Attribute] = {
+    def annotations: Parser[String] = "@\\w+([(].*[)])?".r ^^ identity
+
+    def modifiers: Parser[Modifier] = "(public|protected|private|static|final|volatile|synchronized)".r ^^ {
+      case "public" => Modifiers.Public
+      case "private" => Modifiers.Private
+      case "protected" => Modifiers.Protected
+      case "static" => Modifiers.Static
+      case "final" => Modifiers.Final
+      case "synchronized" => Modifiers.Synchronized
+      case "volatile" => Modifiers.Volatile
+      case s: String => throw AttributeParseError(s"No such annotation $s")
+    }
+
+    def typing: Parser[String] = "\\w+".r ^^ identity
+
+    def naming: Parser[String] = "\\w+".r ^^ identity
+
+    def expression = ";".r | ".*;".r
+
+    annotations.* ~ modifiers.* ~ typing ~ naming <~ expression ^^ {
+      result =>
+        val name = result._2
+        val _type = result._1._2
+        val modifiers = result._1._1._2
+        val annotations = result._1._1._1
+        AttributeBuilder(name, _type, modifiers, annotations).build
+    }
   }
 
   def parseIntoBuilder: String => AttributeBuilder = line => {

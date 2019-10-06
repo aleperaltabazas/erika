@@ -52,7 +52,7 @@ case object ClassParser {
       case ClassTypes.Enum => parseEnumClauses(body)
       case _ => Nil
     }
-    val attributes: List[Attribute] = AttributeParser.parse(body)
+    val attributes: List[Attribute] = AttributeParser.parseAttributes(body)
     val methods: List[Method] = MethodParser.parse(body)
     val parent: Option[String] = parseSuper(className, definitionWords)
     val modifiers: List[Modifier] = parseModifiers(classType, definitionWords)

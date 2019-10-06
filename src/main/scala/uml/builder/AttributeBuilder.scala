@@ -7,7 +7,7 @@ import uml.model.types.Type
 import uml.utils.Implicits.RichString
 
 case class AttributeBuilder(name: String, attributeType: String, modifiers: List[Modifier],
-                            annotations: List[String]) extends Builder {
+                            annotations: List[String] = Nil) extends Builder {
 
   def build: Attribute = attributes.Attribute(name.removeByRegex(";"), Type of attributeType, effectiveModifiers, annotations)
 
