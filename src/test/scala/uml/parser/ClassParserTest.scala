@@ -3,6 +3,7 @@ package uml.parser
 import org.scalatest.{FlatSpec, Matchers}
 import uml.builder.ClassBuilder
 import uml.model.Modifiers._
+import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
 import uml.model.classes.ClassTypes
 import uml.model.methods.{Argument, Method}
@@ -90,7 +91,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
             modifiers = List(Default), annotations = Nil)
         ),
         modifiers = List(Public),
-        annotations = List("@Data()"),
+        annotations = List(Annotation("Data", Map())),
         interfaces = Nil,
         classType = ClassTypes.Interface,
         declaredSuper = None,

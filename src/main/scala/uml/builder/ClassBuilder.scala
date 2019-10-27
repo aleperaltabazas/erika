@@ -3,6 +3,7 @@ package uml.builder
 import uml.exception.BuildError
 import uml.model
 import uml.model.Modifiers.Modifier
+import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
 import uml.model.classes.ClassTypes.ClassType
 import uml.model.classes.{ActualClass, ClassTypes, Enum, Interface}
@@ -13,7 +14,7 @@ case class ClassBuilder(name: String,
                         attributes: List[Attribute],
                         methods: List[Method],
                         modifiers: List[Modifier],
-                        annotations: List[String],
+                        annotations: List[Annotation],
                         interfaces: List[String],
                         classType: ClassType,
                         declaredSuper: Option[String],

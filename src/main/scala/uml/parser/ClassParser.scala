@@ -3,6 +3,7 @@ package uml.parser
 import uml.builder.ClassBuilder
 import uml.model.Member
 import uml.model.Modifiers.{Generic, Modifier}
+import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
 import uml.model.classes.ClassTypes.ClassType
 import uml.model.classes.{Class, ClassTypes}
@@ -14,8 +15,14 @@ import uml.utils.Implicits._
 import scala.util.parsing.combinator.RegexParsers
 
 case object ClassParser extends RegexParsers {
-  private val annotations = "@\\w+(\\w|_|\\d)?".r ~ ("(" ~> repsep("(\\w|[.]|\\d|\\s|=)*".r, ",") <~ ")").? ^^ {
-    result => result._1 + result._2.map("(" + _.mkString(",") + ")").getOrElse("()")
+  private val annotations = "@" ~> "\\w+(\\w|_|\\d)?".r ~ ("(" ~> repsep("(\\w|[.]|\\d|\\s|=)*".r, ",") <~ ")").? ^^ {
+    result =>
+      val name = result._1
+      val properties = result._2.map(props => props.map(_.splitBy("=") match {
+        case x :: Nil => ("value", x.trim)
+        case x :: y :: Nil => (x.trim, y.trim)
+      })).getOrElse(Nil).toMap
+      Annotation(name, properties)
   }
   private val visibility = "public|private|protected".r ^^ (_.toModifier)
   private val modifiers = "abstract|static|final|volatile|synchronized|default".r ^^ (_.toModifier)
