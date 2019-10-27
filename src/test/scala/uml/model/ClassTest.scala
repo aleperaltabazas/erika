@@ -8,9 +8,9 @@ import uml.model.methods.Method
 import uml.model.types.Type
 
 case class ClassTest() extends FlatSpec with Matchers {
-  val foo = ActualClass("Foo", Nil, Nil, Nil, Nil, None, Nil, false)
+  val foo = ActualClass("Foo", Nil, Nil, Nil, Nil, None, Nil)
   val bar = Interface("Bar", Nil, Nil, Nil, None)
-  val baz = ActualClass("Baz", Nil, Nil, Nil, Nil, None, Nil, true)
+  val baz = ActualClass("Baz", Nil, Nil, Nil, Nil, None, Nil)
   val biz = Enum("Biz", Nil, Nil, Nil, Nil, Nil, Nil)
 
   "write" should "work with empty components list" in {
@@ -33,8 +33,7 @@ case class ClassTest() extends FlatSpec with Matchers {
     ), List(Public),
       Nil,
       None,
-      Nil,
-      false)
+      Nil)
 
     foo.writeRelations shouldBe ""
     qux.writeRelations shouldBe "Qux --> Foo\nQux --> Bar\nQux --> \"*\" Baz"

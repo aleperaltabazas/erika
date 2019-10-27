@@ -22,7 +22,8 @@ case object Parsers {
 
   case class Inner(left: Char, right: Char) extends BoundedParser(left, right, inner => inner > 0)
 
-  case class Outer(left: Char, right: Char) extends BoundedParser(left, right, outer => outer == 0)
+  case class Outer(left: Char, right: Char, nestingDepth: Int = 0) extends BoundedParser(left, right, outer => outer
+    <= nestingDepth)
 
   implicit class CharParser(left: Char) {
 

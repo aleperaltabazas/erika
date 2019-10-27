@@ -3,18 +3,48 @@ package uml.builder
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import test.utils.Implicits._
 import uml.model.Modifiers.PackagePrivate
-import uml.model.classes
 import uml.model.classes.{ActualClass, ClassTypes, Interface}
+import uml.model.{Modifiers, classes}
 import uml.repository._
 
 case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter {
-  val classBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.ConcreteClass, None, Nil)
-  val interfaceBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.Interface, None, Nil)
-  val abstractClassBuilder: ClassBuilder = ClassBuilder("", Nil, Nil, Nil, Nil, Nil, ClassTypes.AbstractClass, None, Nil)
+  val classBuilder: ClassBuilder = ClassBuilder(
+    name = "",
+    attributes = Nil,
+    methods = Nil,
+    modifiers = List(Modifiers.Abstract),
+    annotations = Nil,
+    interfaces = Nil,
+    classType = ClassTypes.ActualClass,
+    declaredSuper = None,
+    enumClauses = Nil
+  )
+  val interfaceBuilder: ClassBuilder = ClassBuilder(
+    name = "",
+    attributes = Nil,
+    methods = Nil,
+    modifiers = Nil,
+    annotations = Nil,
+    interfaces = Nil,
+    classType = ClassTypes.Interface,
+    declaredSuper = None,
+    enumClauses = Nil
+  )
+  val abstractClassBuilder: ClassBuilder = ClassBuilder(
+    name = "",
+    attributes = Nil,
+    methods = Nil,
+    modifiers = Nil,
+    annotations = Nil,
+    interfaces = Nil,
+    classType = ClassTypes.ActualClass,
+    declaredSuper = None,
+    enumClauses = Nil
+  )
 
-  val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, false)
+  val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil)
   val interface: Interface = Interface("", Nil, List(PackagePrivate), Nil, None)
-  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil, true)
+  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil)
   var classRepository: ClassRepository = new ClassRepository()
   var builderRepository: ClassBuilderRepository = new ClassBuilderRepository()
 

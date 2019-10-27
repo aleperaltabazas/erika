@@ -36,10 +36,8 @@ case class ClassBuilder(name: String,
     val self = classType match {
       case ClassTypes.Enum => Enum(name, attributes, methods, effectiveModifiers, annotations, builtInterfaces, enumClauses)
       case ClassTypes.Interface => Interface(name, methods, effectiveModifiers, annotations, builtSuper)
-      case ClassTypes.AbstractClass => ActualClass(name, attributes, methods, effectiveModifiers, annotations,
-        builtSuper, builtInterfaces, isAbstract = true)
-      case ClassTypes.ConcreteClass => ActualClass(name, attributes, methods, effectiveModifiers, annotations,
-        builtSuper, builtInterfaces, isAbstract = false)
+      case ClassTypes.ActualClass => ActualClass(name, attributes, methods, effectiveModifiers, annotations,
+        builtSuper, builtInterfaces)
     }
 
     classes.add(self)

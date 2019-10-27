@@ -16,4 +16,10 @@ case class ParseHelpersTest() extends FlatSpec with Matchers {
     outsideParenthesis("ShouldParse(ignores here)ContinuesHere") shouldBe "ShouldParse()ContinuesHere"
     outsideParenthesis("Parses(and(ignores(nested)))") shouldBe "Parses()"
   }
+
+  "Outer with defined nesting depth" should "work" in {
+    val outsideBraces = Outer('(', ')', 1)
+    outsideBraces("should parse(this(but not this(nor this))) and continues here") shouldBe "should parse(this()) and" +
+      " continues here"
+  }
 }

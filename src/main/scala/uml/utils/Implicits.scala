@@ -17,7 +17,7 @@ object Implicits {
       case "synchronized" => Modifiers.Synchronized
       case "volatile" => Modifiers.Volatile
       case "abstract" => Modifiers.Abstract
-      case _ if str.matches("<\\w+(, ?\\w+)*>") => Modifiers.Generic
+      case _ if str.matches("<.*>") => Modifiers.Generic
       case _ => throw NoSuchModifierException(str)
     }
 

@@ -6,14 +6,8 @@ case object ClassTypes {
     def write: String
   }
 
-  case object ConcreteClass extends ClassType {
+  case object ActualClass extends ClassType {
     override def write: String = "class"
-
-    override def toString: String = "class"
-  }
-
-  case object AbstractClass extends ClassType {
-    override def write: String = "abstract class"
 
     override def toString: String = "class"
   }
