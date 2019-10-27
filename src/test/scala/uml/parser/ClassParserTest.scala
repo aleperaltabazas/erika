@@ -23,7 +23,14 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     )
     ClassParser.parseClassToBuilder("class Foo {\nprivate int foo;\n}") shouldBe ClassBuilder(
       name = "Foo",
-      attributes = List(Attribute("foo", StandardTypes.Int, List(Private), Nil)),
+      attributes = List(
+        Attribute(
+          name = "foo",
+          attributeType = StandardTypes.Int,
+          modifiers = List(Private),
+          annotations = Nil
+        )
+      ),
       methods = Nil,
       modifiers = Nil,
       annotations = Nil,
@@ -35,7 +42,15 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseClassToBuilder("class Foo {\npublic int getFoo() {\nreturn 2;\n}\n}") shouldBe ClassBuilder(
       name = "Foo",
       attributes = Nil,
-      methods = List(Method("getFoo", StandardTypes.Int, Nil, List(Public), Nil)),
+      methods = List(
+        Method(
+          name = "getFoo",
+          outputType = StandardTypes.Int,
+          arguments = Nil,
+          modifiers = List(Public),
+          annotations = Nil
+        )
+      ),
       modifiers = Nil,
       annotations = Nil,
       interfaces = Nil,
@@ -47,7 +62,15 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       ClassBuilder(
         name = "Foo",
         attributes = Nil,
-        methods = List(Method("foo", StandardTypes.Void, Nil, List(Public), Nil)),
+        methods = List(
+          Method(
+            name = "foo",
+            outputType = StandardTypes.Void,
+            arguments = Nil,
+            modifiers = List(Public),
+            annotations = Nil
+          )
+        ),
         modifiers = List(Public, Abstract),
         annotations = Nil,
         interfaces = Nil,
