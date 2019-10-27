@@ -12,7 +12,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     name = "",
     attributes = Nil,
     methods = Nil,
-    modifiers = List(Modifiers.Abstract),
+    modifiers = Nil,
     annotations = Nil,
     interfaces = Nil,
     classType = ClassTypes.ActualClass,
@@ -34,7 +34,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     name = "",
     attributes = Nil,
     methods = Nil,
-    modifiers = Nil,
+    modifiers = List(Modifiers.Abstract),
     annotations = Nil,
     interfaces = Nil,
     classType = ClassTypes.ActualClass,
@@ -44,7 +44,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
 
   val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil)
   val interface: Interface = Interface("", Nil, List(PackagePrivate), Nil, None)
-  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil)
+  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(Modifiers.Abstract, PackagePrivate), Nil, None, Nil)
   var classRepository: ClassRepository = new ClassRepository()
   var builderRepository: ClassBuilderRepository = new ClassBuilderRepository()
 
@@ -64,7 +64,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
 
     val expectedClass: ActualClass = clazz.copy(name = "Foo")
 
-    classRepository shouldContain expectedClass
+    classRepository.elements(0) shouldBe expectedClass
   }
 
   "build" should "work with parent and no interfaces" in {

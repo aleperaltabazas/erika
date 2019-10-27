@@ -6,7 +6,7 @@ import uml.model.Modifiers._
 import uml.model.attributes.Attribute
 import uml.model.classes.ClassTypes
 import uml.model.methods.{Argument, Method}
-import uml.model.types.SimpleType
+import uml.model.types.StandardTypes
 
 case class ClassParserTest() extends FlatSpec with Matchers {
   "classParserV2" should "work" in {
@@ -23,7 +23,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     )
     ClassParser.parseClassToBuilder("class Foo {\nprivate int foo;\n}") shouldBe ClassBuilder(
       name = "Foo",
-      attributes = List(Attribute("foo", SimpleType("Int"), List(Private), Nil)),
+      attributes = List(Attribute("foo", StandardTypes.Int, List(Private), Nil)),
       methods = Nil,
       modifiers = Nil,
       annotations = Nil,
@@ -35,7 +35,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
     ClassParser.parseClassToBuilder("class Foo {\npublic int getFoo() {\nreturn 2;\n}\n}") shouldBe ClassBuilder(
       name = "Foo",
       attributes = Nil,
-      methods = List(Method("getFoo", SimpleType("Int"), Nil, List(Public), Nil)),
+      methods = List(Method("getFoo", StandardTypes.Int, Nil, List(Public), Nil)),
       modifiers = Nil,
       annotations = Nil,
       interfaces = Nil,
@@ -47,7 +47,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       ClassBuilder(
         name = "Foo",
         attributes = Nil,
-        methods = List(Method("foo", SimpleType("Void"), Nil, List(Public), Nil)),
+        methods = List(Method("foo", StandardTypes.Void, Nil, List(Public), Nil)),
         modifiers = List(Public, Abstract),
         annotations = Nil,
         interfaces = Nil,
@@ -61,12 +61,13 @@ case class ClassParserTest() extends FlatSpec with Matchers {
         name = "Bar",
         attributes = Nil,
         methods = List(
-          Method(name = "doSomething", outputType = SimpleType("Void"), arguments = Nil, modifiers = Nil, annotations = Nil),
-          Method(name = "bar", outputType = SimpleType("Int"), arguments = List(Argument("arg", SimpleType("Int"))),
+          Method(name = "doSomething", outputType = StandardTypes.Void, arguments = Nil, modifiers = Nil, annotations =
+            Nil),
+          Method(name = "bar", outputType = StandardTypes.Int, arguments = List(Argument("arg", StandardTypes.Int)),
             modifiers = List(Default), annotations = Nil)
         ),
         modifiers = List(Public),
-        annotations = List("@Data"),
+        annotations = List("@Data()"),
         interfaces = Nil,
         classType = ClassTypes.Interface,
         declaredSuper = None,

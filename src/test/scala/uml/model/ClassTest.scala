@@ -5,13 +5,43 @@ import uml.model.Modifiers.{Private, Public}
 import uml.model.attributes.Attribute
 import uml.model.classes.{ActualClass, Enum, Interface}
 import uml.model.methods.Method
-import uml.model.types.Type
+import uml.model.types.{SimpleType, StandardTypes, Type}
 
 case class ClassTest() extends FlatSpec with Matchers {
-  val foo = ActualClass("Foo", Nil, Nil, Nil, Nil, None, Nil)
-  val bar = Interface("Bar", Nil, Nil, Nil, None)
-  val baz = ActualClass("Baz", Nil, Nil, Nil, Nil, None, Nil)
-  val biz = Enum("Biz", Nil, Nil, Nil, Nil, Nil, Nil)
+  val foo = ActualClass(
+    name = "Foo",
+    attributes = Nil,
+    methods = Nil,
+    modifiers = Nil,
+    annotations = Nil,
+    parent = None,
+    interfaces = Nil
+  )
+  val bar = Interface(
+    name = "Bar",
+    methods = Nil,
+    modifiers = Nil,
+    annotations = Nil,
+    parent = None
+  )
+  val baz = ActualClass(
+    name = "Baz",
+    attributes = Nil,
+    methods = Nil,
+    modifiers = List(Modifiers.Abstract),
+    annotations = Nil,
+    parent = None,
+    interfaces = Nil
+  )
+  val biz = Enum(
+    name = "Biz",
+    attributes = Nil,
+    methods = Nil,
+    modifiers = Nil,
+    annotations = Nil,
+    interfaces = Nil,
+    clauses = Nil
+  )
 
   "write" should "work with empty components list" in {
     foo.write shouldBe "class Foo {\n\n\n}"
@@ -23,12 +53,12 @@ case class ClassTest() extends FlatSpec with Matchers {
   "writeRelations" should "work" in {
     val qux = ActualClass("Qux", List(
       Attribute("foo", Type of "Foo", List(Private), Nil),
-      attributes.Attribute("bar", Type of "Bar", List(Private), Nil),
-      attributes.Attribute("baz", Type of "List<Baz>", List(Private), Nil),
-      attributes.Attribute("some", Type of "Int", List(Private), Nil)
+      attributes.Attribute("bar", SimpleType("Bar"), List(Private), Nil),
+      attributes.Attribute("baz", Type of  "List<Baz>", List(Private), Nil),
+      attributes.Attribute("some", StandardTypes.Int, List(Private), Nil)
     ), List(
-      Method("getFoo", Type of "Foo", Nil, List(Public), Nil),
-      methods.Method("getSome", Type of "Int", Nil, List(Public), Nil),
+      Method("getFoo", SimpleType("Foo"), Nil, List(Public), Nil),
+      methods.Method("getSome", StandardTypes.Int, Nil, List(Public), Nil),
       methods.Method("getBaz", Type of "List<Baz>", Nil, List(Public), Nil)
     ), List(Public),
       Nil,
