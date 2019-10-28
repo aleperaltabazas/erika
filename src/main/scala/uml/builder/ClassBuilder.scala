@@ -2,6 +2,7 @@ package uml.builder
 
 import uml.exception.BuildError
 import uml.model
+import uml.model.Member
 import uml.model.Modifiers.Modifier
 import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
@@ -18,7 +19,7 @@ case class ClassBuilder(name: String,
                         interfaces: List[String],
                         classType: ClassType,
                         declaredSuper: Option[String],
-                        enumClauses: List[String]) extends Builder {
+                        enumClauses: List[String]) extends Builder with Member {
 
   def build(classes: ClassRepository, builders: ClassBuilderRepository): Unit = {
     declaredSuper.flatMap(parent => builders.find(_.name == parent)).foreach(_.build(classes, builders))

@@ -15,7 +15,7 @@ import uml.utils.Implicits._
 import scala.util.parsing.combinator.RegexParsers
 
 case object JavaClassParser extends RegexParsers {
-  private val annotations = "@" ~> "\\w+(\\w|_|\\d)?".r ~ ("(" ~> repsep("(\\w|[.]|\\d|\\s|=)*".r, ",") <~ ")").? ^^ {
+  private val annotations = "@" ~> "\\w(\\w|_|\\d)*".r ~ ("(" ~> repsep("(\\w|[.]|\\d|\\s|=)*".r, ",") <~ ")").? ^^ {
     result =>
       val name = result._1
       val properties = result._2.map(props => props.map(_.splitBy("=") match {
@@ -72,7 +72,7 @@ case object JavaClassParser extends RegexParsers {
     }
   }
 
-  private val memberParser: Parser[Member] = methodParser | attributeParser
+  private val memberParser: Parser[Member] = methodParser | attributeParser | classParser
 
   private val classTypeParser: Parser[ClassType] = "class|interface|enum".r ^^ {
     case "class" => ClassTypes.ActualClass
@@ -92,7 +92,7 @@ case object JavaClassParser extends RegexParsers {
 
   private val inheritance = "extends" ~> className
   private val implementation = "implements" ~> repsep(className, ",")
-  private val classParser =
+  private val classParser: Parser[ClassBuilder] =
     packageParser.? ~> importParser.* ~> annotations.* ~ (visibility | modifiers).* ~ classTypeParser ~ className ~ inheritance.? ~
       implementation.? ~ body ^^ {
       case annotations ~ modifiers ~ classType ~ name ~ parent ~ interfaces ~ content =>
