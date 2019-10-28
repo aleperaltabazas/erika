@@ -1,8 +1,7 @@
-package uml.model
+package uml.model.attributes
 
 import org.scalatest.{FlatSpec, Matchers}
 import uml.model.Modifiers.Public
-import uml.model.attributes.Attribute
 import uml.model.types.{GenericType, StandardTypes}
 
 case class AttributeTest() extends FlatSpec with Matchers {

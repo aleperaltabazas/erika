@@ -1,11 +1,11 @@
-package uml.model
+package uml.model.classes
 
 import org.scalatest.{FlatSpec, Matchers}
 import uml.model.Modifiers.{Private, Public}
 import uml.model.attributes.Attribute
-import uml.model.classes.{ActualClass, Enum, Interface}
 import uml.model.methods.Method
 import uml.model.types.{SimpleType, StandardTypes, Type}
+import uml.model.{Modifiers, attributes, methods}
 
 case class ClassTest() extends FlatSpec with Matchers {
   val foo = ActualClass(

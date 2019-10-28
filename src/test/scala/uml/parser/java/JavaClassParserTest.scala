@@ -1,17 +1,17 @@
-package uml.parser
+package uml.parser.java
 
 import org.scalatest.{FlatSpec, Matchers}
 import uml.builder.ClassBuilder
-import uml.model.Modifiers._
+import uml.model.Modifiers.{Abstract, Default, Private, Public}
 import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
 import uml.model.classes.ClassTypes
 import uml.model.methods.{Argument, Method}
 import uml.model.types.StandardTypes
 
-case class ClassParserTest() extends FlatSpec with Matchers {
+case class JavaClassParserTest() extends FlatSpec with Matchers {
   "classParserV2" should "work" in {
-    ClassParser.parseClassToBuilder("class Foo {}") shouldBe ClassBuilder(
+    JavaClassParser.parseClassToBuilder("class Foo {}") shouldBe ClassBuilder(
       name = "Foo",
       attributes = Nil,
       methods = Nil,
@@ -22,7 +22,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       declaredSuper = None,
       enumClauses = Nil
     )
-    ClassParser.parseClassToBuilder("class Foo {\nprivate int foo;\n}") shouldBe ClassBuilder(
+    JavaClassParser.parseClassToBuilder("class Foo {\nprivate int foo;\n}") shouldBe ClassBuilder(
       name = "Foo",
       attributes = List(
         Attribute(
@@ -40,7 +40,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       declaredSuper = None,
       enumClauses = Nil
     )
-    ClassParser.parseClassToBuilder("class Foo {\npublic int getFoo() {\nreturn 2;\n}\n}") shouldBe ClassBuilder(
+    JavaClassParser.parseClassToBuilder("class Foo {\npublic int getFoo() {\nreturn 2;\n}\n}") shouldBe ClassBuilder(
       name = "Foo",
       attributes = Nil,
       methods = List(
@@ -59,7 +59,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
       declaredSuper = None,
       enumClauses = Nil
     )
-    ClassParser.parseClassToBuilder("public abstract class Foo {\npublic void foo(){\n}\n}\n}") shouldBe
+    JavaClassParser.parseClassToBuilder("public abstract class Foo {\npublic void foo(){\n}\n}\n}") shouldBe
       ClassBuilder(
         name = "Foo",
         attributes = Nil,
@@ -79,7 +79,7 @@ case class ClassParserTest() extends FlatSpec with Matchers {
         declaredSuper = None,
         enumClauses = Nil
       )
-    ClassParser.parseClassToBuilder("@Data\npublic interface Bar {\nvoid doSomething();\ndefault int bar(int arg) " +
+    JavaClassParser.parseClassToBuilder("@Data\npublic interface Bar {\nvoid doSomething();\ndefault int bar(int arg) " +
       "{\n}\n}") shouldBe
       ClassBuilder(
         name = "Bar",

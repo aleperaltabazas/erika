@@ -1,4 +1,4 @@
-package uml.parser
+package uml.parser.java
 
 import uml.builder.ClassBuilder
 import uml.model.Member
@@ -14,7 +14,7 @@ import uml.utils.Implicits._
 
 import scala.util.parsing.combinator.RegexParsers
 
-case object ClassParser extends RegexParsers {
+case object JavaClassParser extends RegexParsers {
   private val annotations = "@" ~> "\\w+(\\w|_|\\d)?".r ~ ("(" ~> repsep("(\\w|[.]|\\d|\\s|=)*".r, ",") <~ ")").? ^^ {
     result =>
       val name = result._1

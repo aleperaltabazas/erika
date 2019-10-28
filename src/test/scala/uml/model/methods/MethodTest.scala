@@ -1,7 +1,6 @@
-package uml.model
+package uml.model.methods
 
 import org.scalatest.{FlatSpec, Matchers}
-import uml.model.methods.{Argument, Method}
 import uml.model.types.{GenericType, SimpleType, StandardTypes, Type}
 
 case class MethodTest() extends FlatSpec with Matchers {
