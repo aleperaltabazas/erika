@@ -1,6 +1,6 @@
 package uml.repository
 
-abstract class AbstractRepository[T](private var elements: List[T] = List()) {
+abstract class AbstractRepository[T](var elements: List[T] = List()) {
   def addAll(elements: List[T]): Unit = this.elements = elements
 
   def findAll(condition: T => Boolean): List[T] = elements.filter(condition)

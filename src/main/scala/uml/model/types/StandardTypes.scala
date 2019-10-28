@@ -1,18 +1,58 @@
 package uml.model.types
 
 case object StandardTypes {
-  val INT: Type = SimpleType("Int")
-  val CHAR: Type = SimpleType("Character")
-  val DOUBLE: Type = SimpleType("Double")
-  val STRING: Type = SimpleType("String")
-  val FLOAT: Type = SimpleType("Float")
-  val BOOL: Type = SimpleType("Boolean")
-  val LONG: Type = SimpleType("Long")
-  val SHORT: Type = SimpleType("Short")
-  val VOID: Type = SimpleType("Void")
-  val BYTE: Type = SimpleType("Byte")
-  val ANY: Type = SimpleType("Any")
-  val OBJECT: Type = SimpleType("Object")
+
+  trait StandardType extends Type {
+    override def matchesWith(name: String): Boolean = this.name == name
+  }
+
+  case object Int extends StandardType {
+    override def name: String = "Int"
+  }
+
+  case object Char extends StandardType {
+    override def name: String = "Char"
+  }
+
+  case object Double extends StandardType {
+    override def name: String = "Double"
+  }
+
+  case object String extends StandardType {
+    override def name: String = "String"
+  }
+
+  case object Float extends StandardType {
+    override def name: String = "Float"
+  }
+
+  case object Bool extends StandardType {
+    override def name: String = "Bool"
+  }
+
+  case object Long extends StandardType {
+    override def name: String = "Long"
+  }
+
+  case object Short extends StandardType {
+    override def name: String = "Short"
+  }
+
+  case object Void extends StandardType {
+    override def name: String = "Void"
+  }
+
+  case object Byte extends StandardType {
+    override def name: String = "Byte"
+  }
+
+  case object Any extends StandardType {
+    override def name: String = "Any"
+  }
+
+  case object Object extends StandardType {
+    override def name: String = "Object"
+  }
 
   val LIST: GenericPlaceholder = GenericPlaceholder("List", 1)
   val QUEUE: GenericPlaceholder = GenericPlaceholder("Queue", 1)
@@ -23,17 +63,17 @@ case object StandardTypes {
   val COLLECTION: GenericPlaceholder = GenericPlaceholder("Collection", 1)
 
   def getType(name: String): Option[Type] = name match {
-    case "int" | "Integer" => Option(INT)
-    case "char" | "Character" => Option(CHAR)
-    case "double" | "Double" => Option(DOUBLE)
-    case "String" => Option(STRING)
-    case "float" | "FLOAT" => Option(FLOAT)
-    case "boolean" | "Boolean" => Option(BOOL)
-    case "long" | "Long" => Option(LONG)
-    case "short" | "Short" => Option(SHORT)
-    case "void" | "Void" => Option(VOID)
-    case "byte" | "Byte" => Option(BYTE)
-    case "any" | "Any" => Option(ANY)
+    case "int" | "Integer" => Option(Int)
+    case "char" | "Char" => Option(Char)
+    case "double" | "Double" => Option(Double)
+    case "String" => Option(String)
+    case "float" | "Float" => Option(Float)
+    case "boolean" | "Boolean" => Option(Bool)
+    case "long" | "Long" => Option(Long)
+    case "short" | "Short" => Option(Short)
+    case "void" | "Void" => Option(Void)
+    case "byte" | "Byte" => Option(Byte)
+    case "any" | "Any" => Option(Any)
     case _ => None
   }
 
@@ -52,6 +92,6 @@ case object StandardTypes {
 
   def contains(_type: Type): Boolean = standardTypes.contains(_type)
 
-  private def standardTypes: List[Type] = List(INT, CHAR, DOUBLE, FLOAT, STRING, BOOL, LONG, SHORT, VOID, BYTE, ANY,
-    OBJECT)
+  private def standardTypes: List[Type] = List(Int, Char, Double, Float, String, Bool, Long, Short, Void, Byte, Any,
+    Object)
 }

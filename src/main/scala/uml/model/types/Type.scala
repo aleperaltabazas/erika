@@ -21,7 +21,7 @@ object Type {
         throw new IllegalArgumentException(s"Tried to " +
           s"build ${_type} as generic, but no matching placeholder was found")
       }
-      val any = List.fill(placeholder.arity)(StandardTypes.ANY)
+      val any = List.fill(placeholder.arity)(StandardTypes.Any)
       placeholder(any)
     } else {
       StandardTypes.getType(_type).getOrElse(SimpleType(_type))
