@@ -5,7 +5,7 @@ import java.io.{ByteArrayOutputStream, FileOutputStream}
 import net.sourceforge.plantuml.{FileFormat, FileFormatOption, SourceStringReader}
 import uml.model.classes.Class
 
-case object Writer {
+case class Writer() {
   def classDiagram(classes: List[Class]): String = {
     "@startuml\n" +
       (classes.map(_.write) ++ classes.map(_.writeRelations)).mkString("\n") +

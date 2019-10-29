@@ -7,14 +7,14 @@ import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
 import uml.model.classes.ClassTypes.ClassType
 import uml.model.classes.{Class, ClassTypes}
+import uml.model.lang.Lang
 import uml.model.methods.{Argument, Method}
 import uml.model.types.Type
+import uml.parser.ClassParser
 import uml.repository.{ClassBuilderRepository, ClassRepository}
 import uml.utils.Implicits._
 
-import scala.util.parsing.combinator.RegexParsers
-
-case object JavaClassParser extends RegexParsers {
+case class JavaClassParser() extends ClassParser {
   private val annotations = "@" ~> "\\w(\\w|_|\\d)*".r ~ ("(" ~> repsep("(\\w|[.]|\\d|\\s|=)*".r, ",") <~ ")").? ^^ {
     result =>
       val name = result._1
@@ -43,13 +43,8 @@ case object JavaClassParser extends RegexParsers {
   private val attributeParser: Parser[Attribute] = {
     annotations.* ~ (modifiers | visibility).* ~ typing ~ naming <~ (assignation | ";")
   } ^^ {
-    result =>
-      val name = result._2
-      val _type = result._1._2
-      val allModifiers = result._1._1._2
-      val allAnnotations = result._1._1._1
-
-      Attribute(name, _type, allModifiers, allAnnotations)
+    case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName =>
+      Attribute(parsedName, parsedType, parsedModifiers, Lang.Java(parsedAnnotations, parsedModifiers))
   }
 
   private val genericModifier: Parser[Modifier] = generic ^^ (_ => Generic)
@@ -66,9 +61,8 @@ case object JavaClassParser extends RegexParsers {
   private val methodParser: Parser[Method] = {
     annotations.* ~ (modifiers | visibility | genericModifier).* ~ typing ~
       naming ~ ("(" ~> repsep(argument, ",") <~ ")") <~ methodBody ^^ {
-      result =>
-        val parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName ~ parsedArguments = result
-        Method(parsedName, parsedType, parsedArguments, parsedModifiers, parsedAnnotations)
+      case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName ~ parsedArguments =>
+        Method(parsedName, parsedType, parsedArguments, parsedModifiers, Lang.Java(parsedAnnotations, parsedModifiers))
     }
   }
 
@@ -96,6 +90,7 @@ case object JavaClassParser extends RegexParsers {
     packageParser.? ~> importParser.* ~> annotations.* ~ (visibility | modifiers).* ~ classTypeParser ~ className ~ inheritance.? ~
       implementation.? ~ body ^^ {
       case annotations ~ modifiers ~ classType ~ name ~ parent ~ interfaces ~ content =>
+        val language = Lang.Java(annotations, modifiers)
         var attributes: List[Attribute] = Nil
         var methods: List[Method] = Nil
         content.foldLeft(()) {
@@ -105,7 +100,7 @@ case object JavaClassParser extends RegexParsers {
               case m: Method => methods = methods ++ List(m)
             }
         }
-        ClassBuilder(name, attributes, methods, modifiers, annotations, interfaces.getOrElse(Nil), classType, parent, Nil)
+        ClassBuilder(name, attributes, methods, modifiers, interfaces.getOrElse(Nil), classType, parent, Nil, language)
     }
 
   def parseClassToBuilder(clazz: String): ClassBuilder = this.parse(classParser, clazz) match {

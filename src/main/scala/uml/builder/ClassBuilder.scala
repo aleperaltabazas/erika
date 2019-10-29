@@ -4,10 +4,10 @@ import uml.exception.BuildError
 import uml.model
 import uml.model.Member
 import uml.model.Modifiers.Modifier
-import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
 import uml.model.classes.ClassTypes.ClassType
 import uml.model.classes.{ActualClass, ClassTypes, Enum, Interface}
+import uml.model.lang.Lang.Language
 import uml.model.methods.Method
 import uml.repository.{ClassBuilderRepository, ClassRepository}
 
@@ -15,11 +15,11 @@ case class ClassBuilder(name: String,
                         attributes: List[Attribute],
                         methods: List[Method],
                         modifiers: List[Modifier],
-                        annotations: List[Annotation],
                         interfaces: List[String],
                         classType: ClassType,
                         declaredSuper: Option[String],
-                        enumClauses: List[String]) extends Builder with Member {
+                        enumClauses: List[String],
+                        language: Language) extends Builder with Member {
 
   def build(classes: ClassRepository, builders: ClassBuilderRepository): Unit = {
     declaredSuper.flatMap(parent => builders.find(_.name == parent)).foreach(_.build(classes, builders))
@@ -36,10 +36,10 @@ case class ClassBuilder(name: String,
     }
 
     val self = classType match {
-      case ClassTypes.Enum => Enum(name, attributes, methods, effectiveModifiers, annotations, builtInterfaces, enumClauses)
-      case ClassTypes.Interface => Interface(name, methods, effectiveModifiers, annotations, builtSuper)
-      case ClassTypes.ActualClass => ActualClass(name, attributes, methods, effectiveModifiers, annotations,
-        builtSuper, builtInterfaces)
+      case ClassTypes.Enum => Enum(name, attributes, methods, effectiveModifiers, builtInterfaces,
+        enumClauses, language)
+      case ClassTypes.Interface => Interface(name, methods, effectiveModifiers, builtSuper, language)
+      case ClassTypes.ActualClass => ActualClass(name, attributes, methods, effectiveModifiers, builtSuper, builtInterfaces, language)
     }
 
     classes.add(self)

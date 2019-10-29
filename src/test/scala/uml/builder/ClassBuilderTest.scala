@@ -4,6 +4,7 @@ import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import test.utils.Implicits._
 import uml.model.Modifiers.PackagePrivate
 import uml.model.classes.{ActualClass, ClassTypes, Interface}
+import uml.model.lang.Lang
 import uml.model.{Modifiers, classes}
 import uml.repository._
 
@@ -13,38 +14,38 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     attributes = Nil,
     methods = Nil,
     modifiers = Nil,
-    annotations = Nil,
     interfaces = Nil,
     classType = ClassTypes.ActualClass,
     declaredSuper = None,
-    enumClauses = Nil
+    enumClauses = Nil,
+    language = Lang.Java(Nil, Nil)
   )
   val interfaceBuilder: ClassBuilder = ClassBuilder(
     name = "",
     attributes = Nil,
     methods = Nil,
     modifiers = Nil,
-    annotations = Nil,
     interfaces = Nil,
     classType = ClassTypes.Interface,
     declaredSuper = None,
-    enumClauses = Nil
+    enumClauses = Nil,
+    language = Lang.Java(Nil, Nil)
   )
   val abstractClassBuilder: ClassBuilder = ClassBuilder(
     name = "",
     attributes = Nil,
     methods = Nil,
     modifiers = List(Modifiers.Abstract),
-    annotations = Nil,
     interfaces = Nil,
     classType = ClassTypes.ActualClass,
     declaredSuper = None,
-    enumClauses = Nil
+    enumClauses = Nil,
+    language = Lang.Java(Nil, List(Modifiers.Abstract))
   )
 
-  val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), Nil, None, Nil)
-  val interface: Interface = Interface("", Nil, List(PackagePrivate), Nil, None)
-  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(Modifiers.Abstract, PackagePrivate), Nil, None, Nil)
+  val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), None, Nil, Lang.Java(Nil, Nil))
+  val interface: Interface = Interface("", Nil, List(PackagePrivate), None, Lang.Java(Nil, Nil))
+  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(Modifiers.Abstract, PackagePrivate), None, Nil, Lang.Java(Nil, Nil))
   var classRepository: ClassRepository = new ClassRepository()
   var builderRepository: ClassBuilderRepository = new ClassBuilderRepository()
 

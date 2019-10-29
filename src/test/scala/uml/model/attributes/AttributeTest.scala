@@ -2,6 +2,7 @@ package uml.model.attributes
 
 import org.scalatest.{FlatSpec, Matchers}
 import uml.model.Modifiers.Public
+import uml.model.lang.Lang
 import uml.model.types.{GenericType, StandardTypes}
 
 case class AttributeTest() extends FlatSpec with Matchers {
@@ -9,19 +10,19 @@ case class AttributeTest() extends FlatSpec with Matchers {
     name = "foo",
     attributeType = StandardTypes.Int,
     modifiers = List(Public),
-    annotations = Nil
+    language = Lang.Java(Nil, List(Public))
   )
   val bar = Attribute(
     name = "bar",
     attributeType = GenericType("List", List(StandardTypes.String)),
     modifiers = List(Public),
-    annotations = Nil
+    language = Lang.Java(Nil, List(Public))
   )
   val baz = Attribute(
     name = "baz",
     attributeType = GenericType("Map", List(StandardTypes.String, GenericType("List", List(StandardTypes.String)))),
     modifiers = Nil,
-    annotations = Nil
+    language = Lang.Java(Nil, List(Public))
   )
 
   "write" should "work" in {

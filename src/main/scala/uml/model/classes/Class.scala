@@ -2,8 +2,8 @@ package uml.model.classes
 
 import uml.model.Modifiable
 import uml.model.Modifiers.Modifier
-import uml.model.annotations.Annotation
 import uml.model.attributes.Attribute
+import uml.model.lang.Lang.Language
 import uml.model.methods.Method
 import uml.model.types.{GenericType, SimpleType}
 
@@ -17,11 +17,11 @@ trait Class extends Modifiable {
 
   def modifiers: List[Modifier]
 
-  def annotations: List[Annotation]
-
   def parent: Option[Class]
 
   def interfaces: List[Class]
+
+  def language: Language
 
   private def isInherited(attribute: Attribute): Boolean = parent.exists(p => p.attributes.exists(_.name == attribute.name))
 

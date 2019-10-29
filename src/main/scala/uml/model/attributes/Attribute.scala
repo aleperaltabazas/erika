@@ -1,11 +1,11 @@
 package uml.model.attributes
 
 import uml.model.Modifiers.Modifier
-import uml.model.annotations.Annotation
+import uml.model.lang.Lang.Language
 import uml.model.types.{StandardTypes, Type}
 import uml.model.{Member, Modifiable}
 
-case class Attribute(name: String, attributeType: Type, modifiers: List[Modifier], annotations: List[Annotation])
+case class Attribute(name: String, attributeType: Type, modifiers: List[Modifier], language: Language)
   extends Modifiable with Member {
   def getterMethod: String = s"get${name.capitalize}"
 

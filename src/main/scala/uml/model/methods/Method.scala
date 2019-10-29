@@ -1,13 +1,13 @@
 package uml.model.methods
 
 import uml.model.Modifiers.Modifier
-import uml.model.annotations.Annotation
 import uml.model.classes.Class
+import uml.model.lang.Lang.Language
 import uml.model.types.Type
 import uml.model.{Member, Modifiable}
 
 case class Method(name: String, outputType: Type, arguments: List[Argument], modifiers: List[Modifier],
-                  annotations: List[Annotation]) extends Modifiable with Member {
+                  language: Language) extends Modifiable with Member {
 
   def isBoilerplate(clazz: Class): Boolean = clazz.attributes
     .exists(attr => name == attr.getterMethod || name == attr.setterMethod)

@@ -10,8 +10,9 @@ object Main {
       case x :: y :: _ => (x, y)
     }
 
-    val classFiles = Reader(basePath)
-    val writtenClasses = Writer.classDiagram(classFiles)
-    Writer(writtenClasses)(basePath)
+    val classFiles = Reader()(basePath)
+    val writer = Writer()
+    val writtenClasses = writer.classDiagram(classFiles)
+    writer(writtenClasses)(basePath)
   }
 }
