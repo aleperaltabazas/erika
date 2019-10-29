@@ -44,13 +44,14 @@ case class JavaClassParser() extends ClassParser {
     annotations.* ~ (modifiers | visibility).* ~ typing ~ naming <~ (assignation | ";")
   } ^^ {
     case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName =>
-      Attribute(parsedName, parsedType, parsedModifiers, Lang.Java(parsedAnnotations, parsedModifiers))
+      Attribute(parsedName, parsedType, parsedModifiers, Lang.Java(parsedAnnotations))
   }
 
   private val genericModifier: Parser[Modifier] = generic ^^ (_ => Generic)
 
   private val argument = annotations.* ~ modifiers.* ~ typing ~ naming ^^ {
-    result => Argument(result._2, result._1._2)
+    case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName =>
+      Argument(parsedName, parsedType, parsedModifiers, Lang.Java(parsedAnnotations))
   }
 
   private val methodBody = ("{" <~ expression <~ "}") | ";"
@@ -62,7 +63,7 @@ case class JavaClassParser() extends ClassParser {
     annotations.* ~ (modifiers | visibility | genericModifier).* ~ typing ~
       naming ~ ("(" ~> repsep(argument, ",") <~ ")") <~ methodBody ^^ {
       case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName ~ parsedArguments =>
-        Method(parsedName, parsedType, parsedArguments, parsedModifiers, Lang.Java(parsedAnnotations, parsedModifiers))
+        Method(parsedName, parsedType, parsedArguments, parsedModifiers, Lang.Java(parsedAnnotations))
     }
   }
 
@@ -90,7 +91,7 @@ case class JavaClassParser() extends ClassParser {
     packageParser.? ~> importParser.* ~> annotations.* ~ (visibility | modifiers).* ~ classTypeParser ~ className ~ inheritance.? ~
       implementation.? ~ body ^^ {
       case annotations ~ modifiers ~ classType ~ name ~ parent ~ interfaces ~ content =>
-        val language = Lang.Java(annotations, modifiers)
+        val language = Lang.Java(annotations)
         var attributes: List[Attribute] = Nil
         var methods: List[Method] = Nil
         content.foldLeft(()) {

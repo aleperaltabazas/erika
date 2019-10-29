@@ -16,14 +16,14 @@ case class ClassTest() extends FlatSpec with Matchers {
     modifiers = Nil,
     parent = None,
     interfaces = Nil,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
   val bar = Interface(
     name = "Bar",
     methods = Nil,
     modifiers = Nil,
     parent = None,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
   val baz = ActualClass(
     name = "Baz",
@@ -32,7 +32,7 @@ case class ClassTest() extends FlatSpec with Matchers {
     modifiers = List(Modifiers.Abstract),
     parent = None,
     interfaces = Nil,
-    language = Lang.Java(Nil, List(Modifiers.Abstract))
+    language = Lang.Java(Nil)
   )
   val biz = Enum(
     name = "Biz",
@@ -41,7 +41,7 @@ case class ClassTest() extends FlatSpec with Matchers {
     modifiers = Nil,
     interfaces = Nil,
     clauses = Nil,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
 
   "write" should "work with empty components list" in {
@@ -55,20 +55,20 @@ case class ClassTest() extends FlatSpec with Matchers {
     val qux = ActualClass(
       name = "Qux",
       attributes = List(
-        Attribute("foo", Type of "Foo", List(Private), Lang.Java(Nil, List(Private))),
-        attributes.Attribute("bar", SimpleType("Bar"), List(Private), Lang.Java(Nil, List(Private))),
-        attributes.Attribute("baz", Type of "List<Baz>", List(Private), Lang.Java(Nil, List(Private))),
-        attributes.Attribute("some", StandardTypes.Int, List(Private), Lang.Java(Nil, List(Private)))
+        Attribute("foo", Type of "Foo", List(Private), Lang.Java(Nil)),
+        attributes.Attribute("bar", SimpleType("Bar"), List(Private), Lang.Java(Nil)),
+        attributes.Attribute("baz", Type of "List<Baz>", List(Private), Lang.Java(Nil)),
+        attributes.Attribute("some", StandardTypes.Int, List(Private), Lang.Java(Nil))
       ),
       methods = List(
-        Method("getFoo", SimpleType("Foo"), Nil, List(Public), Lang.Java(Nil, List(Public))),
-        methods.Method("getSome", StandardTypes.Int, Nil, List(Public), Lang.Java(Nil, List(Public))),
-        methods.Method("getBaz", Type of "List<Baz>", Nil, List(Public), Lang.Java(Nil, List(Public)))
+        Method("getFoo", SimpleType("Foo"), Nil, List(Public), Lang.Java(Nil)),
+        methods.Method("getSome", StandardTypes.Int, Nil, List(Public), Lang.Java(Nil)),
+        methods.Method("getBaz", Type of "List<Baz>", Nil, List(Public), Lang.Java(Nil))
       ),
       modifiers = List(Public),
       parent = None,
       interfaces = Nil,
-      language = Lang.Java(Nil, List(Public))
+      language = Lang.Java(Nil)
     )
 
     foo.writeRelations shouldBe ""

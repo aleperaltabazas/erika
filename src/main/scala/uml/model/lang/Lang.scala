@@ -7,6 +7,6 @@ case object Lang {
 
   sealed trait Language
 
-  case class Java(annotations: List[Annotation], modifiers: List[Modifier]) extends Language
+  case class Java(annotations: List[Annotation]) extends Language
 
 }

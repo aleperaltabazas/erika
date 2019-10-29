@@ -21,7 +21,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
       classType = ClassTypes.ActualClass,
       declaredSuper = None,
       enumClauses = Nil,
-      language = Lang.Java(Nil, Nil)
+      language = Lang.Java(Nil)
     )
     JavaClassParser().parseClassToBuilder("class Foo {\nprivate int foo;\n}") shouldBe ClassBuilder(
       name = "Foo",
@@ -30,7 +30,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
           name = "foo",
           attributeType = StandardTypes.Int,
           modifiers = List(Private),
-          language = Lang.Java(Nil, List(Private))
+          language = Lang.Java(Nil)
         )
       ),
       methods = Nil,
@@ -39,7 +39,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
       classType = ClassTypes.ActualClass,
       declaredSuper = None,
       enumClauses = Nil,
-      language = Lang.Java(Nil, Nil)
+      language = Lang.Java(Nil)
     )
     JavaClassParser().parseClassToBuilder("class Foo {\npublic int getFoo() {\nreturn 2;\n}\n}") shouldBe ClassBuilder(
       name = "Foo",
@@ -50,7 +50,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
           outputType = StandardTypes.Int,
           arguments = Nil,
           modifiers = List(Public),
-          language = Lang.Java(Nil, List(Public))
+          language = Lang.Java(Nil)
         )
       ),
       modifiers = Nil,
@@ -58,7 +58,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
       classType = ClassTypes.ActualClass,
       declaredSuper = None,
       enumClauses = Nil,
-      language = Lang.Java(Nil, Nil)
+      language = Lang.Java(Nil)
     )
     JavaClassParser().parseClassToBuilder("public abstract class Foo {\npublic void foo(){\n}\n}\n}") shouldBe
       ClassBuilder(
@@ -70,7 +70,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
             outputType = StandardTypes.Void,
             arguments = Nil,
             modifiers = List(Public),
-            language = Lang.Java(Nil, List(Public))
+            language = Lang.Java(Nil)
           )
         ),
         modifiers = List(Public, Abstract),
@@ -78,7 +78,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
         classType = ClassTypes.ActualClass,
         declaredSuper = None,
         enumClauses = Nil,
-        language = Lang.Java(Nil, List(Public, Abstract))
+        language = Lang.Java(Nil)
       )
     JavaClassParser().parseClassToBuilder("@Data\npublic interface Bar {\nvoid doSomething();\ndefault int bar(int " +
       "arg) {\n}\n}") shouldBe
@@ -91,14 +91,14 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
             outputType = StandardTypes.Void,
             arguments = Nil,
             modifiers = Nil,
-            language = Lang.Java(Nil, Nil)
+            language = Lang.Java(Nil)
           ),
           Method(
             name = "bar",
             outputType = StandardTypes.Int,
-            arguments = List(Argument("arg", StandardTypes.Int)),
+            arguments = List(Argument("arg", StandardTypes.Int, Nil, Lang.Java(Nil))),
             modifiers = List(Default),
-            language = Lang.Java(Nil, List(Default))
+            language = Lang.Java(Nil)
           )
         ),
         modifiers = List(Public),
@@ -106,7 +106,7 @@ case class JavaClassParserTest() extends FlatSpec with Matchers {
         classType = ClassTypes.Interface,
         declaredSuper = None,
         enumClauses = Nil,
-        language = Lang.Java(List(Annotation("Data", Map())), List(Public))
+        language = Lang.Java(List(Annotation("Data", Map())))
       )
   }
 }

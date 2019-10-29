@@ -18,7 +18,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     classType = ClassTypes.ActualClass,
     declaredSuper = None,
     enumClauses = Nil,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
   val interfaceBuilder: ClassBuilder = ClassBuilder(
     name = "",
@@ -29,7 +29,7 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     classType = ClassTypes.Interface,
     declaredSuper = None,
     enumClauses = Nil,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
   val abstractClassBuilder: ClassBuilder = ClassBuilder(
     name = "",
@@ -40,12 +40,12 @@ case class ClassBuilderTest() extends FlatSpec with Matchers with BeforeAndAfter
     classType = ClassTypes.ActualClass,
     declaredSuper = None,
     enumClauses = Nil,
-    language = Lang.Java(Nil, List(Modifiers.Abstract))
+    language = Lang.Java(Nil)
   )
 
-  val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), None, Nil, Lang.Java(Nil, Nil))
-  val interface: Interface = Interface("", Nil, List(PackagePrivate), None, Lang.Java(Nil, Nil))
-  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(Modifiers.Abstract, PackagePrivate), None, Nil, Lang.Java(Nil, Nil))
+  val clazz: ActualClass = ActualClass("", Nil, Nil, List(PackagePrivate), None, Nil, Lang.Java(Nil))
+  val interface: Interface = Interface("", Nil, List(PackagePrivate), None, Lang.Java(Nil))
+  val abstractClass: ActualClass = ActualClass("", Nil, Nil, List(Modifiers.Abstract, PackagePrivate), None, Nil, Lang.Java(Nil))
   var classRepository: ClassRepository = new ClassRepository()
   var builderRepository: ClassBuilderRepository = new ClassBuilderRepository()
 

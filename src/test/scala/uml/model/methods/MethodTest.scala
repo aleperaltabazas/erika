@@ -2,7 +2,7 @@ package uml.model.methods
 
 import org.scalatest.{FlatSpec, Matchers}
 import uml.model.lang.Lang
-import uml.model.types.{GenericType, SimpleType, StandardTypes, Type}
+import uml.model.types.{GenericType, SimpleType, StandardTypes}
 
 case class MethodTest() extends FlatSpec with Matchers {
   val foo = Method(
@@ -10,23 +10,25 @@ case class MethodTest() extends FlatSpec with Matchers {
     outputType = StandardTypes.Int,
     arguments = Nil,
     modifiers = Nil,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
   val baz = Method(
     name = "baz",
     outputType = StandardTypes.Void,
-    arguments = List(Argument("a", StandardTypes.String)),
+    arguments = List(Argument("a", StandardTypes.String, Nil, Lang.Java(Nil))),
     modifiers = Nil,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
   val biz = Method(
     name = "biz",
     outputType = GenericType("List", List(StandardTypes.String)),
     arguments = List(
-      Argument("a", GenericType("List", List(StandardTypes.String))), Argument("b", SimpleType("Foo")), Argument("c", Type of "Bar")
+      Argument("a", GenericType("List", List(StandardTypes.String)), Nil, Lang.Java(Nil)),
+      Argument("b", SimpleType("Foo"), Nil, Lang.Java(Nil)),
+      Argument("c", SimpleType("Bar"), Nil, Lang.Java(Nil))
     ),
     modifiers = Nil,
-    language = Lang.Java(Nil, Nil)
+    language = Lang.Java(Nil)
   )
 
   "write" should "work" in {

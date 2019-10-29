@@ -10,19 +10,19 @@ case class AttributeTest() extends FlatSpec with Matchers {
     name = "foo",
     attributeType = StandardTypes.Int,
     modifiers = List(Public),
-    language = Lang.Java(Nil, List(Public))
+    language = Lang.Java(Nil)
   )
   val bar = Attribute(
     name = "bar",
     attributeType = GenericType("List", List(StandardTypes.String)),
     modifiers = List(Public),
-    language = Lang.Java(Nil, List(Public))
+    language = Lang.Java(Nil)
   )
   val baz = Attribute(
     name = "baz",
     attributeType = GenericType("Map", List(StandardTypes.String, GenericType("List", List(StandardTypes.String)))),
     modifiers = Nil,
-    language = Lang.Java(Nil, List(Public))
+    language = Lang.Java(Nil)
   )
 
   "write" should "work" in {
