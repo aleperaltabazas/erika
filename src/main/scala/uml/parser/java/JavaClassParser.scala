@@ -40,12 +40,6 @@ case class JavaClassParser() extends ClassParser {
   private val expression: Parser[List[String]] = "{" ~> expression <~ "}" | anyChar.*
 
   private val assignation = "=" ~ anyChar ~ ";"
-  private val attributeParser: Parser[Attribute] = {
-    annotations.* ~ (modifiers | visibility).* ~ typing ~ naming <~ (assignation | ";")
-  } ^^ {
-    case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName =>
-      Attribute(parsedName, parsedType, parsedModifiers, Lang.Java(parsedAnnotations))
-  }
 
   private val genericModifier: Parser[Modifier] = generic ^^ (_ => Generic)
 
@@ -58,16 +52,6 @@ case class JavaClassParser() extends ClassParser {
 
   private val packageParser = "package" ~> "\\w+([.]|\\w|_|\\d|@)*".r ~> ";"
   private val importParser = "import" ~> modifiers.* ~> "\\w+([.]|\\w|_|\\d|[*])*".r ~> ";"
-
-  private val methodParser: Parser[Method] = {
-    annotations.* ~ (modifiers | visibility | genericModifier).* ~ typing ~
-      naming ~ ("(" ~> repsep(argument, ",") <~ ")") <~ methodBody ^^ {
-      case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName ~ parsedArguments =>
-        Method(parsedName, parsedType, parsedArguments, parsedModifiers, Lang.Java(parsedAnnotations))
-    }
-  }
-
-  private val memberParser: Parser[Member] = methodParser | attributeParser | classParser
 
   private val classTypeParser: Parser[ClassType] = "class|interface|enum".r ^^ {
     case "class" => ClassTypes.ActualClass
@@ -87,7 +71,8 @@ case class JavaClassParser() extends ClassParser {
 
   private val inheritance = "extends" ~> className
   private val implementation = "implements" ~> repsep(className, ",")
-  private val classParser: Parser[ClassBuilder] =
+
+  private def classBuilderParser: Parser[ClassBuilder] = {
     packageParser.? ~> importParser.* ~> annotations.* ~ (visibility | modifiers).* ~ classTypeParser ~ className ~ inheritance.? ~
       implementation.? ~ body ^^ {
       case annotations ~ modifiers ~ classType ~ name ~ parent ~ interfaces ~ content =>
@@ -103,8 +88,26 @@ case class JavaClassParser() extends ClassParser {
         }
         ClassBuilder(name, attributes, methods, modifiers, interfaces.getOrElse(Nil), classType, parent, Nil, language)
     }
+  }
 
-  def parseClassToBuilder(clazz: String): ClassBuilder = this.parse(classParser, clazz) match {
+  private def methodParser: Parser[Method] = {
+    annotations.* ~ (modifiers | visibility | genericModifier).* ~ typing ~
+      naming ~ ("(" ~> repsep(argument, ",") <~ ")") <~ methodBody ^^ {
+      case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName ~ parsedArguments =>
+        Method(parsedName, parsedType, parsedArguments, parsedModifiers, Lang.Java(parsedAnnotations))
+    }
+  }
+
+  private def attributeParser: Parser[Attribute] = {
+    annotations.* ~ (modifiers | visibility).* ~ typing ~ naming <~ (assignation | ";")
+  } ^^ {
+    case parsedAnnotations ~ parsedModifiers ~ parsedType ~ parsedName =>
+      Attribute(parsedName, parsedType, parsedModifiers, Lang.Java(parsedAnnotations))
+  }
+
+  private def memberParser: Parser[Member] = methodParser | attributeParser | classBuilderParser
+
+  def parseClassToBuilder(clazz: String): ClassBuilder = this.parse(classBuilderParser, clazz) match {
     case Success(result, _) => result
     case Failure(msg, next) => throw new RuntimeException(s"Parse failure: msg: $msg, next: $next")
     case Error(msg, next) => throw new RuntimeException(s"Parse error: msg $msg, next: $next")
