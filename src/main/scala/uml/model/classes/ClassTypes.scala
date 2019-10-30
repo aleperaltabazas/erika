@@ -24,4 +24,8 @@ case object ClassTypes {
     override def toString: String = "enum"
   }
 
+  case object WellKnownObject extends ClassType {
+    override def write: String = "object"
+  }
+
 }
